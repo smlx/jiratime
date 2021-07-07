@@ -1,0 +1,33 @@
+0840-0900
+platform ops
+0900-0930
+foo sync
+0930-1040
+fooCustomer devops - node scheduling issue
+1040-1200
+admin
+1200-1310
+standup
+1310-1400
+pd
+1435-1445
+pd
+1445-1500
+bar sync
+1500-1515
+pd
+1515-1530
+platform sync
+1530-1545
+fooCustomer devops - reply to MS
+1545-1550
+admin
+1550-1600
+barCustomer infra
+check internal tracker ticket re: tls tunnelling
+1600-1630
+admin
+1630-1700
+platform ops - example5 cluster melting down again
+1700-1715
+admin
