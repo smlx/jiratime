@@ -1,6 +1,7 @@
 package client
 
 import (
+	"context"
 	"fmt"
 
 	jira "github.com/andygrunwald/go-jira"
@@ -9,7 +10,7 @@ import (
 
 // UploadWorklogs uploads the given worklogs to JIRA, with the
 // given day offset (e.g. -1 == yesterday).
-func UploadWorklogs(worklogs map[string][]parse.Worklog, dayOffset int) error {
+func UploadWorklogs(ctx context.Context, worklogs map[string][]parse.Worklog, dayOffset int) error {
 
 	// TODO check for auth
 

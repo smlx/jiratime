@@ -8,7 +8,6 @@ type Regexp struct {
 }
 
 // UnmarshalJSON satisfies the json.Unmarshaler interface.
-// also used by json.Unmarshal.
 func (r *Regexp) UnmarshalJSON(text []byte) error {
 	rr, err := regexp.Compile(string(text))
 	if err != nil {
@@ -16,4 +15,9 @@ func (r *Regexp) UnmarshalJSON(text []byte) error {
 	}
 	*r = Regexp{*rr}
 	return nil
+}
+
+// MarshalJSON satisfies the json.Marshaler interface.
+func (r *Regexp) MarshalJSON() ([]byte, error) {
+	return []byte(r.Regexp.String()), nil
 }
