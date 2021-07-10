@@ -1,4 +1,4 @@
-package main
+package parse
 
 import (
 	"bufio"
@@ -7,9 +7,17 @@ import (
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/smlx/jiratime/internal/config"
 )
 
 var timeRange = regexp.MustCompile(`^[0-9]{4}-[0-9]{4}\s?$`)
+
+// Worklog represents an individual work log entry on a ticket.
+type Worklog struct {
+	Duration time.Duration
+	Comment  string // optional
+}
 
 func parseDuration(t string) (time.Duration, error) {
 	times := strings.Split(strings.TrimSpace(t), "-")
@@ -31,7 +39,7 @@ func parseDuration(t string) (time.Duration, error) {
 	return duration, nil
 }
 
-func identifyIssue(line string, c *Config) (string, error) {
+func identifyIssue(line string, c *config.Config) (string, error) {
 	for _, issue := range c.Issues {
 		for _, r := range issue.Regexes {
 			if r.MatchString(line) {
@@ -42,8 +50,8 @@ func identifyIssue(line string, c *Config) (string, error) {
 	return "", fmt.Errorf("couldn't match issue to line: %v", line)
 }
 
-// ParseInput parses text form stdin and returns an issue-Worklog map.
-func ParseInput(r io.Reader, c *Config) (map[string][]Worklog, error) {
+// Input parses text form stdin and returns an issue-Worklog map.
+func Input(r io.Reader, c *config.Config) (map[string][]Worklog, error) {
 	var duration time.Duration
 	var issue, comment string
 	worklogs := map[string][]Worklog{}

@@ -1,4 +1,4 @@
-package main_test
+package parse_test
 
 import (
 	"os"
@@ -7,19 +7,20 @@ import (
 	"testing"
 	"time"
 
-	main "github.com/smlx/jiratime"
+	"github.com/smlx/jiratime/internal/config"
+	"github.com/smlx/jiratime/internal/parse"
 )
 
 type parseInput struct {
 	dataFile string
-	config   *main.Config
+	config   *config.Config
 }
 
-func wrapRegexes(regexes []string) []main.Regexp {
-	var regexps []main.Regexp
+func wrapRegexes(regexes []string) []config.Regexp {
+	var regexps []config.Regexp
 	for _, s := range regexes {
 		r := regexp.MustCompile(s)
-		regexps = append(regexps, main.Regexp{*r})
+		regexps = append(regexps, config.Regexp{Regexp: *r})
 	}
 	return regexps
 }
@@ -27,13 +28,13 @@ func wrapRegexes(regexes []string) []main.Regexp {
 func TestParseInput(t *testing.T) {
 	var testCases = map[string]struct {
 		input  *parseInput
-		expect map[string][]main.Worklog
+		expect map[string][]parse.Worklog
 	}{
 		"worklog0": {
 			input: &parseInput{
 				dataFile: "testdata/worklog0",
-				config: &main.Config{
-					Issues: []main.Issue{
+				config: &config.Config{
+					Issues: []config.Issue{
 						{
 							ID: "PLATFORM-1",
 							Regexes: wrapRegexes([]string{
@@ -91,7 +92,7 @@ func TestParseInput(t *testing.T) {
 					},
 				},
 			},
-			expect: map[string][]main.Worklog{
+			expect: map[string][]parse.Worklog{
 				"PLATFORM-1": {
 					{
 						Duration: 20 * time.Minute,
@@ -183,7 +184,7 @@ func TestParseInput(t *testing.T) {
 			if err != nil {
 				tt.Fatal(err)
 			}
-			worklog, err := main.ParseInput(f, tc.input.config)
+			worklog, err := parse.Input(f, tc.input.config)
 			if err != nil {
 				tt.Fatal(err)
 			}
