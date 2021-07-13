@@ -20,8 +20,8 @@ type OAuth2 struct {
 	Token    *oauth2.Token `json:"token"`
 }
 
-// LoadAuth the config file.
-func LoadAuth(path string) (*OAuth2, error) {
+// ReadAuth the config file.
+func ReadAuth(path string) (*OAuth2, error) {
 	y, err := os.ReadFile(path)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't read config file: %v", err)

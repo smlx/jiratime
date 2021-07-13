@@ -7,6 +7,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/smlx/jiratime/internal/config"
 	"github.com/smlx/jiratime/internal/parse"
 )
@@ -177,6 +178,29 @@ func TestParseInput(t *testing.T) {
 				},
 			},
 		},
+		"worklog1": {
+			input: &parseInput{
+				dataFile: "testdata/worklog1",
+				config: &config.Config{
+					Issues: []config.Issue{
+						{
+							ID: "ADMIN-1",
+							Regexes: wrapRegexes([]string{
+								"^admin$",
+							}),
+						},
+					},
+				},
+			},
+			expect: map[string][]parse.Worklog{
+				"ADMIN-1": {
+					{
+						Duration: 45 * time.Minute,
+						Comment:  "admin",
+					},
+				},
+			},
+		},
 	}
 	for name, tc := range testCases {
 		t.Run(name, func(tt *testing.T) {
@@ -184,12 +208,14 @@ func TestParseInput(t *testing.T) {
 			if err != nil {
 				tt.Fatal(err)
 			}
-			worklog, err := parse.Input(f, tc.input.config)
+			worklogs, err := parse.Input(f, tc.input.config)
+			spew.Dump(worklogs)
+			spew.Dump(tc.input.config)
 			if err != nil {
 				tt.Fatal(err)
 			}
-			if !reflect.DeepEqual(worklog, tc.expect) {
-				tt.Fatalf("expected: %v\n\n---\n\ngot: %v", tc.expect, worklog)
+			if !reflect.DeepEqual(worklogs, tc.expect) {
+				tt.Fatalf("expected: %v\n\n---\n\ngot: %v", tc.expect, worklogs)
 			}
 		})
 	}

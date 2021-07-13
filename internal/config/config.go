@@ -18,8 +18,8 @@ type Config struct {
 	Issues []Issue `json:"issues"`
 }
 
-// Load the config file.
-func Load(path string) (*Config, error) {
+// Read the config file.
+func Read(path string) (*Config, error) {
 	y, err := os.ReadFile(path)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't read config file: %v", err)

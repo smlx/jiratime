@@ -1,6 +1,9 @@
 package config
 
-import "regexp"
+import (
+	"regexp"
+	"strings"
+)
 
 // Regexp is a type that supports JSON Unmarshalling
 type Regexp struct {
@@ -9,7 +12,7 @@ type Regexp struct {
 
 // UnmarshalJSON satisfies the json.Unmarshaler interface.
 func (r *Regexp) UnmarshalJSON(text []byte) error {
-	rr, err := regexp.Compile(string(text))
+	rr, err := regexp.Compile(strings.Trim(string(text), `"`))
 	if err != nil {
 		return err
 	}

@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/smlx/jiratime/internal/config"
 )
 
@@ -90,6 +91,10 @@ func Input(r io.Reader, c *config.Config) (map[string][]Worklog, error) {
 			if issue == "" {
 				// identify an issue, as we don't have one yet
 				issue, err = identifyIssue(line, c)
+				if err != nil {
+					return nil, fmt.Errorf("couldn't identify issue in line `%s`: %v",
+						line, err)
+				}
 			}
 			if comment == "" {
 				comment = line
@@ -103,5 +108,7 @@ func Input(r io.Reader, c *config.Config) (map[string][]Worklog, error) {
 		Duration: duration,
 		Comment:  comment,
 	})
+	spew.Dump(worklogs)
+	spew.Dump(issue)
 	return worklogs, nil
 }

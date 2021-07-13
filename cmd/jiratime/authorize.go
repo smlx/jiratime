@@ -11,6 +11,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/smlx/jiratime/internal/client"
 	"github.com/smlx/jiratime/internal/config"
 	"golang.org/x/oauth2"
 )
@@ -54,34 +55,24 @@ func (cmd *AuthorizeCmd) Run() error {
 	ctx, cancel := getContext(30 * time.Second)
 	defer cancel()
 	// read the config file to get the oauth2 clientID and secret
-	auth, err := config.LoadAuth("./auth.yml")
+	auth, err := config.ReadAuth("./auth.yml")
 	if err != nil {
 		return fmt.Errorf("couldn't load config: %v", err)
 	}
-	// handle missing oauth2 config
+	// sanity check configuration
 	if auth == nil {
 		return fmt.Errorf("couldn't find oauth2 configuration")
 	}
 	if auth.ClientID == "" || auth.Secret == "" {
-		return fmt.Errorf("missing ClientID or Secret")
-	}
-	// configure the oauth client
-	conf := &oauth2.Config{
-		ClientID:     auth.ClientID,
-		ClientSecret: auth.Secret,
-		// offline_access requests a refresh token
-		Scopes: []string{"write:jira-work", "offline_access"},
-		Endpoint: oauth2.Endpoint{
-			TokenURL: "https://auth.atlassian.com/oauth/token",
-			AuthURL:  "https://auth.atlassian.com/authorize",
-		},
-		RedirectURL: "http://localhost:8080/oauth/redirect",
+		return fmt.Errorf("missing ClientID or Secret in oauth2 configuration")
 	}
 	// generate a random state
 	state, err := randomHex(16)
 	if err != nil {
 		return fmt.Errorf("couldn't generate state: %v", err)
 	}
+	// get the OAuth2 config object
+	conf := client.GetOAuth2Config(auth)
 	// Redirect user to consent page to ask for permission
 	// for the scopes specified above.
 	url := conf.AuthCodeURL(state,
