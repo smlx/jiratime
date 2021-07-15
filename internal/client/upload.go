@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"fmt"
+	"time"
 
 	jira "github.com/andygrunwald/go-jira"
 	"github.com/smlx/jiratime/internal/config"
@@ -11,9 +12,10 @@ import (
 
 // UploadWorklogs uploads the given worklogs to JIRA, with the
 // given day offset (e.g. -1 == yesterday).
-func UploadWorklogs(ctx context.Context, issueWorklogs map[string][]parse.Worklog, dayOffset int) error {
+func UploadWorklogs(ctx context.Context,
+	issueWorklogs map[string][]parse.Worklog, dayOffset int) error {
 	// load the auth config to get the oauth2 token
-	auth, err := config.ReadAuth("./auth.yml")
+	auth, err := config.ReadAuth()
 	if err != nil {
 		return fmt.Errorf("couldn't load auth config: %v", err)
 	}
@@ -40,19 +42,26 @@ func UploadWorklogs(ctx context.Context, issueWorklogs map[string][]parse.Worklo
 			return fmt.Errorf("couldn't get JIRA issue %s: %v", issue, err)
 		}
 	}
+	// calculate the started offset time in case we are using a day offset
+	var started jira.Time = jira.Time(
+		time.Now().Add(time.Hour * 24 * time.Duration(dayOffset)))
 	// add the worklogs to the issues
 	for issue, worklogs := range issueWorklogs {
 		for _, worklog := range worklogs {
-			_, _, err := c.Issue.AddWorklogRecordWithContext(ctx, issue,
-				&jira.WorklogRecord{
-					Comment:          worklog.Comment,
-					TimeSpentSeconds: int(worklog.Duration.Seconds()),
-				})
+			wr := jira.WorklogRecord{
+				Comment:          worklog.Comment,
+				TimeSpentSeconds: int(worklog.Duration.Seconds()),
+			}
+			if dayOffset != 0 {
+				wr.Started = &started
+			}
+			_, _, err := c.Issue.AddWorklogRecordWithContext(ctx, issue, &wr)
 			if err != nil {
 				return fmt.Errorf("couldn't add worklog record to issue %s: %v", issue, err)
 			}
 		}
 	}
-	// TODO: update the stored token in auth.yml?
+	// TODO: update the stored token in auth.yml? Not sure if it is even possible
+	// to pull that back out of the httpClient...
 	return nil
 }

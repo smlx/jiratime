@@ -7,7 +7,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/smlx/jiratime/internal/config"
 	"github.com/smlx/jiratime/internal/parse"
 )
@@ -209,8 +208,6 @@ func TestParseInput(t *testing.T) {
 				tt.Fatal(err)
 			}
 			worklogs, err := parse.Input(f, tc.input.config)
-			spew.Dump(worklogs)
-			spew.Dump(tc.input.config)
 			if err != nil {
 				tt.Fatal(err)
 			}

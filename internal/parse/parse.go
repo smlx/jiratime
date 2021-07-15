@@ -8,7 +8,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/smlx/jiratime/internal/config"
 )
 
@@ -108,7 +107,5 @@ func Input(r io.Reader, c *config.Config) (map[string][]Worklog, error) {
 		Duration: duration,
 		Comment:  comment,
 	})
-	spew.Dump(worklogs)
-	spew.Dump(issue)
 	return worklogs, nil
 }

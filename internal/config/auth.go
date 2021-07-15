@@ -4,9 +4,12 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/adrg/xdg"
 	"golang.org/x/oauth2"
 	"sigs.k8s.io/yaml"
 )
+
+const authPathSuffix = "jiratime/auth.yml"
 
 // Auth represents the structure of the auth.yml
 type Auth struct {
@@ -21,7 +24,11 @@ type OAuth2 struct {
 }
 
 // ReadAuth the config file.
-func ReadAuth(path string) (*OAuth2, error) {
+func ReadAuth() (*OAuth2, error) {
+	path, err := xdg.ConfigFile(authPathSuffix)
+	if err != nil {
+		return nil, fmt.Errorf("couldn't get path to auth config file: %v", err)
+	}
 	y, err := os.ReadFile(path)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't read config file: %v", err)
@@ -34,7 +41,11 @@ func ReadAuth(path string) (*OAuth2, error) {
 }
 
 // WriteAuth persists the given Config to the given path.
-func WriteAuth(o *OAuth2, path string) error {
+func WriteAuth(o *OAuth2) error {
+	path, err := xdg.ConfigFile(authPathSuffix)
+	if err != nil {
+		return fmt.Errorf("couldn't get path to auth config file: %v", err)
+	}
 	confBytes, err := yaml.Marshal(&Auth{OAuth2: o})
 	if err != nil {
 		return fmt.Errorf("couldn't marshal config: %v", err)

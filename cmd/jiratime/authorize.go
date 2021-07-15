@@ -55,7 +55,7 @@ func (cmd *AuthorizeCmd) Run() error {
 	ctx, cancel := getContext(30 * time.Second)
 	defer cancel()
 	// read the config file to get the oauth2 clientID and secret
-	auth, err := config.ReadAuth("./auth.yml")
+	auth, err := config.ReadAuth()
 	if err != nil {
 		return fmt.Errorf("couldn't load config: %v", err)
 	}
@@ -78,7 +78,7 @@ func (cmd *AuthorizeCmd) Run() error {
 	url := conf.AuthCodeURL(state,
 		oauth2.SetAuthURLParam("audience", "api.atlassian.com"),
 		oauth2.SetAuthURLParam("prompt", "consent"))
-	fmt.Printf("Visit this URL to authorize jiratime: %v", url)
+	fmt.Printf("Visit this URL to authorize jiratime: %s\n", url)
 	// start the server to handle the redirect after authorization
 	c := make(chan string, 1)
 	go startRedirectServer(ctx, state, c)
@@ -97,7 +97,7 @@ func (cmd *AuthorizeCmd) Run() error {
 		log.Fatal(err)
 	}
 	auth.Token = tok
-	if err = config.WriteAuth(auth, "./auth.yml"); err != nil {
+	if err = config.WriteAuth(auth); err != nil {
 		return fmt.Errorf("couldn't write config: %v", err)
 	}
 	return nil

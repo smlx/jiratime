@@ -4,8 +4,11 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/adrg/xdg"
 	"sigs.k8s.io/yaml"
 )
+
+const pathSuffix = "jiratime/config.yml"
 
 // Issue represents the list of known JIRA issues.
 type Issue struct {
@@ -19,7 +22,11 @@ type Config struct {
 }
 
 // Read the config file.
-func Read(path string) (*Config, error) {
+func Read() (*Config, error) {
+	path, err := xdg.ConfigFile(pathSuffix)
+	if err != nil {
+		return nil, fmt.Errorf("couldn't get path to config file: %v", err)
+	}
 	y, err := os.ReadFile(path)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't read config file: %v", err)
@@ -32,7 +39,11 @@ func Read(path string) (*Config, error) {
 }
 
 // Write persists the given Config to the given path.
-func Write(c *Config, path string) error {
+func Write(c *Config) error {
+	path, err := xdg.ConfigFile(pathSuffix)
+	if err != nil {
+		return fmt.Errorf("couldn't get path to config file: %v", err)
+	}
 	confBytes, err := yaml.Marshal(c)
 	if err != nil {
 		return fmt.Errorf("couldn't marshal config: %v", err)

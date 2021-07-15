@@ -11,14 +11,16 @@ import (
 )
 
 // SubmitCmd represents the default `submit` command.
-type SubmitCmd struct{}
+type SubmitCmd struct {
+	DayOffset int `kong:"short='d',help='submit time for a day at some offset to today'"`
+}
 
 // Run the Submit command.
 func (cmd *SubmitCmd) Run() error {
 	ctx, cancel := getContext(8 * time.Second)
 	defer cancel()
 	// read config file
-	conf, err := config.Read("./config.yml")
+	conf, err := config.Read()
 	if err != nil {
 		return fmt.Errorf("couldn't load config: %v", err)
 	}
@@ -29,7 +31,7 @@ func (cmd *SubmitCmd) Run() error {
 		return fmt.Errorf("couldn't parse worklogs: %v", err)
 	}
 	// push the worklogs into jira
-	if err = client.UploadWorklogs(ctx, worklogs, 0); err != nil {
+	if err = client.UploadWorklogs(ctx, worklogs, cmd.DayOffset); err != nil {
 		return fmt.Errorf("couldn't upload worklogs: %v", err)
 	}
 	return nil
