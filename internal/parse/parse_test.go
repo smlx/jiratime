@@ -38,19 +38,21 @@ func TestParseInput(t *testing.T) {
 						{
 							ID: "PLATFORM-1",
 							Regexes: wrapRegexes([]string{
-								"^platform ops",
+								"^platform ops( .+)?$",
 							}),
+							DefaultComment: "platform ops",
 						},
 						{
 							ID: "FOO-12",
 							Regexes: wrapRegexes([]string{
-								"^foo sync",
+								"^foo sync$",
 							}),
+							DefaultComment: "weekly catch-up with foo",
 						},
 						{
 							ID: "FOO-3",
 							Regexes: wrapRegexes([]string{
-								"^fooCustomer devops",
+								"^fooCustomer devops( .+)?$",
 							}),
 						},
 						{
@@ -58,35 +60,40 @@ func TestParseInput(t *testing.T) {
 							Regexes: wrapRegexes([]string{
 								"^admin$",
 							}),
+							DefaultComment: "email / backlog grooming / slack",
 						},
 						{
 							ID: "INTERNAL-2",
 							Regexes: wrapRegexes([]string{
 								"^standup$",
 							}),
+							DefaultComment: "standup",
 						},
 						{
 							ID: "INTERNAL-3",
 							Regexes: wrapRegexes([]string{
 								"^pd$",
 							}),
+							DefaultComment: "primary on-call",
 						},
 						{
 							ID: "BAR-1",
 							Regexes: wrapRegexes([]string{
-								"^bar sync",
+								"^bar sync$",
 							}),
+							DefaultComment: "bar customer weekly meeting",
 						},
 						{
 							ID: "INTERNAL-4",
 							Regexes: wrapRegexes([]string{
-								"^platform sync",
+								"^platform sync$",
 							}),
+							DefaultComment: "platform sync",
 						},
 						{
 							ID: "BAR-2",
 							Regexes: wrapRegexes([]string{
-								"^barCustomer infra",
+								"^barCustomer infra( .+)?$",
 							}),
 						},
 					},
@@ -100,41 +107,41 @@ func TestParseInput(t *testing.T) {
 					},
 					{
 						Duration: 30 * time.Minute,
-						Comment:  "platform ops - example5 cluster melting down again",
+						Comment:  "platform ops\nexample5 cluster melting down again",
 					},
 				},
 				"FOO-12": {
 					{
 						Duration: 30 * time.Minute,
-						Comment:  "foo sync",
+						Comment:  "weekly catch-up with foo",
 					},
 				},
 				"FOO-3": {
 					{
 						Duration: 70 * time.Minute,
-						Comment:  "fooCustomer devops - node scheduling issue",
+						Comment:  "node scheduling issue",
 					},
 					{
 						Duration: 15 * time.Minute,
-						Comment:  "fooCustomer devops - reply to MS",
+						Comment:  "reply to MS",
 					},
 				},
 				"INTERNAL-1": {
 					{
 						Duration: 80 * time.Minute,
-						Comment:  "admin",
+						Comment:  "email / backlog grooming / slack",
 					},
 					{
 						Duration: 5 * time.Minute,
-						Comment:  "admin",
+						Comment:  "email / backlog grooming / slack",
 					},
 					{
 						Duration: 30 * time.Minute,
-						Comment:  "admin",
+						Comment:  "email / backlog grooming / slack",
 					},
 					{
 						Duration: 15 * time.Minute,
-						Comment:  "admin",
+						Comment:  "email / backlog grooming / slack",
 					},
 				},
 				"INTERNAL-2": {
@@ -146,27 +153,27 @@ func TestParseInput(t *testing.T) {
 				"INTERNAL-3": {
 					{
 						Duration: 50 * time.Minute,
-						Comment:  "pd",
+						Comment:  "primary on-call",
 					},
 					{
 						Duration: 10 * time.Minute,
-						Comment:  "pd",
+						Comment:  "primary on-call",
 					},
 					{
 						Duration: 15 * time.Minute,
-						Comment:  "pd",
+						Comment:  "primary on-call",
 					},
 				},
 				"BAR-1": {
 					{
 						Duration: 15 * time.Minute,
-						Comment:  "bar sync",
+						Comment:  "bar customer weekly meeting",
 					},
 				},
 				"BAR-2": {
 					{
 						Duration: 10 * time.Minute,
-						Comment:  "barCustomer infra\ncheck internal tracker ticket re: tls tunnelling",
+						Comment:  "check internal tracker ticket re: tls tunnelling",
 					},
 				},
 				"INTERNAL-4": {
@@ -195,7 +202,25 @@ func TestParseInput(t *testing.T) {
 				"ADMIN-1": {
 					{
 						Duration: 45 * time.Minute,
-						Comment:  "admin",
+						Comment:  "",
+					},
+				},
+				"XYZ-123": {
+					{
+						Duration: 135 * time.Minute,
+						Comment:  "fighting fires",
+					},
+				},
+				"ABC-987": {
+					{
+						Duration: 60 * time.Minute,
+						Comment:  "more boring meetings",
+					},
+				},
+				"ABC-988": {
+					{
+						Duration: 30 * time.Minute,
+						Comment:  "will the meetings\never stop?",
 					},
 				},
 			},
@@ -212,7 +237,7 @@ func TestParseInput(t *testing.T) {
 				tt.Fatal(err)
 			}
 			if !reflect.DeepEqual(worklogs, tc.expect) {
-				tt.Fatalf("expected: %v\n\n---\n\ngot: %v", tc.expect, worklogs)
+				tt.Fatalf("expected:\n%v\n\n---\n\ngot:\n%v", tc.expect, worklogs)
 			}
 		})
 	}

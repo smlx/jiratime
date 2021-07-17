@@ -12,8 +12,9 @@ const pathSuffix = "jiratime/config.yml"
 
 // Issue represents the list of known JIRA issues.
 type Issue struct {
-	ID      string   `json:"id"`
-	Regexes []Regexp `json:"regexes"`
+	ID             string   `json:"id"`
+	Regexes        []Regexp `json:"regexes"`
+	DefaultComment string   `json:"defaultComment"`
 }
 
 // Config represents the structure of the config file.
