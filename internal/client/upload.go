@@ -42,18 +42,15 @@ func UploadWorklogs(ctx context.Context,
 			return fmt.Errorf("couldn't get JIRA issue %s: %v", issue, err)
 		}
 	}
-	// calculate the started offset time in case we are using a day offset
-	var started jira.Time = jira.Time(
-		time.Now().Add(time.Hour * 24 * time.Duration(dayOffset)))
 	// add the worklogs to the issues
 	for issue, worklogs := range issueWorklogs {
 		for _, worklog := range worklogs {
+			started := jira.Time(
+				worklog.Started.Add(time.Hour * 24 * time.Duration(dayOffset)))
 			wr := jira.WorklogRecord{
 				Comment:          worklog.Comment,
 				TimeSpentSeconds: int(worklog.Duration.Seconds()),
-			}
-			if dayOffset != 0 {
-				wr.Started = &started
+				Started:          &started,
 			}
 			_, _, err := c.Issue.AddWorklogRecordWithContext(ctx, issue, &wr)
 			if err != nil {

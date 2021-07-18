@@ -31,6 +31,8 @@ type TimesheetParser struct {
 	mu sync.Mutex
 	// line is the latest line read
 	line string
+	// started is the parsed start time for the current state
+	started time.Time
 	// duration is the parsed duration for the current state
 	duration time.Duration
 	// comment is appended to until worklog submission

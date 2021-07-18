@@ -17,28 +17,32 @@ var jiraIssue = regexp.MustCompile(`^([A-Za-z]+-[0-9]+)(\s.+)?$`)
 
 // Worklog represents an individual work log entry on a ticket.
 type Worklog struct {
+	Started  time.Time
 	Duration time.Duration
 	Comment  string // optional
 }
 
-func parseDuration(t string) (time.Duration, error) {
+func parseTimeRange(t string) (time.Time, time.Duration, error) {
 	times := strings.Split(strings.TrimSpace(t), "-")
 	if len(times) != 2 {
-		return 0, fmt.Errorf("bad timeRange format")
+		return time.Time{}, 0, fmt.Errorf("bad timeRange format")
 	}
-	start, err := time.Parse("1504", times[0])
+	start, err := time.ParseInLocation("1504", times[0], time.Local)
 	if err != nil {
-		return 0, fmt.Errorf("couldn't parse start time: %v", err)
+		return time.Time{}, 0, fmt.Errorf("couldn't parse start time: %v", err)
 	}
-	end, err := time.Parse("1504", times[1])
+	end, err := time.ParseInLocation("1504", times[1], time.Local)
 	if err != nil {
-		return 0, fmt.Errorf("couldn't parse end time: %v", err)
+		return time.Time{}, 0, fmt.Errorf("couldn't parse end time: %v", err)
 	}
 	duration := end.Sub(start)
 	if duration <= 0 {
-		return 0, fmt.Errorf("invalid duration, less than 1 minute")
+		return time.Time{}, 0, fmt.Errorf("invalid duration, less than 1 minute")
 	}
-	return duration, nil
+	now := time.Now()
+	start = time.Date(now.Year(), now.Month(), now.Day(), start.Hour(),
+		start.Minute(), 0, 0, now.Location())
+	return start, duration, nil
 }
 
 func getImplicitIssue(line string, c *config.Config) (string, string, string, error) {
@@ -54,11 +58,6 @@ func getImplicitIssue(line string, c *config.Config) (string, string, string, er
 		}
 	}
 	return "", "", "", fmt.Errorf("couldn't match issue to line: %v", line)
-}
-
-func appendWorklog() error {
-	// TODO: deduplicate lines here
-	return nil
 }
 
 // Input parses text form stdin and returns an issue-Worklog map.
@@ -81,12 +80,13 @@ func Input(r io.Reader, c *config.Config) (map[string][]Worklog, error) {
 				// there is nothing to submit yet.
 				if timesheet.State != start {
 					worklogs[timesheet.issue] = append(worklogs[timesheet.issue], Worklog{
+						Started:  timesheet.started,
 						Duration: timesheet.duration,
 						Comment:  strings.Join(timesheet.comment, "\n"),
 					})
 				}
-				// set the duration
-				timesheet.duration, err = parseDuration(timesheet.line)
+				timesheet.started, timesheet.duration, err =
+					parseTimeRange(timesheet.line)
 				return err
 			},
 		},
@@ -134,6 +134,7 @@ func Input(r io.Reader, c *config.Config) (map[string][]Worklog, error) {
 			func(e fsm.Event) error {
 				// insert the final entry
 				worklogs[timesheet.issue] = append(worklogs[timesheet.issue], Worklog{
+					Started:  timesheet.started,
 					Duration: timesheet.duration,
 					Comment:  strings.Join(timesheet.comment, "\n"),
 				})
