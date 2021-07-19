@@ -30,7 +30,7 @@ func startRedirectServer(ctx context.Context, state string, c chan<- string) {
 			w.WriteHeader(http.StatusBadRequest)
 		}
 		c <- r.FormValue("code")
-		w.Write([]byte("Authorization successful. You may now close this page."))
+		_, _ = w.Write([]byte("Authorization successful. You may now close this page."))
 	})
 	s := &http.Server{
 		Addr:        ":8080",

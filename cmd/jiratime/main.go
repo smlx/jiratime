@@ -19,6 +19,7 @@ var (
 type CLI struct {
 	Submit    SubmitCmd    `kong:"cmd,default=1,help='(default) Submit times'"`
 	Authorize AuthorizeCmd `kong:"cmd,aliases='auth',help='Get OAuth2 client token'"`
+	Version   VersionCmd   `kong:"cmd,help='Print version information'"`
 }
 
 // getContext starts a goroutine to handle ^C gracefully, and returns a

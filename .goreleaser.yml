@@ -1,3 +1,4 @@
 builds:
-- env:
+- main: ./cmd/jiratime
+  env:
   - CGO_ENABLED=0
