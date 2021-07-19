@@ -12,7 +12,8 @@ import (
 
 // SubmitCmd represents the default `submit` command.
 type SubmitCmd struct {
-	DayOffset int `kong:"short='d',help='submit time for a day at some offset to today'"`
+	DayOffset int  `kong:"short='d',help='submit time for a day at some offset to today'"`
+	DryRun    bool `kong:"help='read-only mode; do not actually make any changes in JIRA'"`
 }
 
 // Run the Submit command.
@@ -31,7 +32,7 @@ func (cmd *SubmitCmd) Run() error {
 		return fmt.Errorf("couldn't parse worklogs: %v", err)
 	}
 	// push the worklogs into jira
-	if err = client.UploadWorklogs(ctx, worklogs, cmd.DayOffset); err != nil {
+	if err = client.UploadWorklogs(ctx, worklogs, cmd.DayOffset, cmd.DryRun); err != nil {
 		return fmt.Errorf("couldn't upload worklogs: %v", err)
 	}
 	return nil

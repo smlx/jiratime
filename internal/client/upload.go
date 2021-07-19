@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"fmt"
+	"log"
 	"time"
 
 	jira "github.com/andygrunwald/go-jira"
@@ -13,7 +14,7 @@ import (
 // UploadWorklogs uploads the given worklogs to JIRA, with the
 // given day offset (e.g. -1 == yesterday).
 func UploadWorklogs(ctx context.Context,
-	issueWorklogs map[string][]parse.Worklog, dayOffset int) error {
+	issueWorklogs map[string][]parse.Worklog, dayOffset int, dryRun bool) error {
 	// load the auth config to get the oauth2 token
 	auth, err := config.ReadAuth()
 	if err != nil {
@@ -41,6 +42,10 @@ func UploadWorklogs(ctx context.Context,
 		if err != nil {
 			return fmt.Errorf("couldn't get JIRA issue %s: %v", issue, err)
 		}
+	}
+	if dryRun {
+		log.Println("dry-run mode: not submitting any work logs")
+		return nil
 	}
 	// add the worklogs to the issues
 	for issue, worklogs := range issueWorklogs {
