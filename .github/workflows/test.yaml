@@ -1,0 +1,19 @@
+name: Test Suite
+on: pull_request
+
+jobs:
+  go-test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2.3.4
+    - name: Configure git
+      run: |
+        git config --global user.name "$GITHUB_ACTOR"
+        git config --global user.email "$GITHUB_ACTOR@users.noreply.github.com"
+    - name: Set up go
+      uses: actions/setup-go@v2
+      with:
+        go-version: "^1.16"
+    - name: Run tests
+      run: go test -v .
