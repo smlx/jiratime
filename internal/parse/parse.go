@@ -75,10 +75,10 @@ func Input(r io.Reader, c *config.Config) (map[string][]Worklog, error) {
 
 	timesheet.OnEntry = map[fsm.State][]fsm.TransitionFunc{
 		gotDuration: {
-			func(_ fsm.Event) error {
+			func(_ fsm.Event, s fsm.State) error {
 				// If we are transitioning from start then this is the first entry and
 				// there is nothing to submit yet.
-				if timesheet.State != start {
+				if s != start {
 					worklogs[timesheet.issue] = append(worklogs[timesheet.issue], Worklog{
 						Started:  timesheet.started,
 						Duration: timesheet.duration,
@@ -91,7 +91,7 @@ func Input(r io.Reader, c *config.Config) (map[string][]Worklog, error) {
 			},
 		},
 		gotExplicitIssue: {
-			func(e fsm.Event) error {
+			func(e fsm.Event, _ fsm.State) error {
 				if e == noMatch {
 					timesheet.comment =
 						append(timesheet.comment, strings.Trim(timesheet.line, " -"))
@@ -110,8 +110,8 @@ func Input(r io.Reader, c *config.Config) (map[string][]Worklog, error) {
 			},
 		},
 		gotImplicitIssue: {
-			func(e fsm.Event) error {
-				if timesheet.State == gotDuration {
+			func(e fsm.Event, s fsm.State) error {
+				if s == gotDuration {
 					// we haven't identified an issue yet, so try to do so here
 					var defaultComment, comment string
 					timesheet.issue, defaultComment, comment, err =
@@ -131,7 +131,7 @@ func Input(r io.Reader, c *config.Config) (map[string][]Worklog, error) {
 			},
 		},
 		end: {
-			func(e fsm.Event) error {
+			func(e fsm.Event, _ fsm.State) error {
 				// insert the final entry
 				worklogs[timesheet.issue] = append(worklogs[timesheet.issue], Worklog{
 					Started:  timesheet.started,
