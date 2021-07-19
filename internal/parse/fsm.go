@@ -24,7 +24,7 @@ const (
 	eof
 )
 
-// A TimesheetParser is a list of time periods and comments.
+// A TimesheetParser parses a list of time periods and comments.
 // It stores additional state related to timesheet parsing.
 type TimesheetParser struct {
 	fsm.Machine

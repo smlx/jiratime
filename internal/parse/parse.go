@@ -22,6 +22,9 @@ type Worklog struct {
 	Comment  string // optional
 }
 
+// parseTimeRange takes a string containing a time range in 24-hour notation,
+// and returns a start-time (assuming the time is today), and a duration.
+// Example t: "0900-1315".
 func parseTimeRange(t string) (time.Time, time.Duration, error) {
 	times := strings.Split(strings.TrimSpace(t), "-")
 	if len(times) != 2 {
@@ -45,6 +48,8 @@ func parseTimeRange(t string) (time.Time, time.Duration, error) {
 	return start, duration, nil
 }
 
+// getImplicitIssue attempts to match a given string against a list of regexes
+// configured for a JIRA issue. It returns an error if no match can be found.
 func getImplicitIssue(line string, c *config.Config) (string, string, string, error) {
 	for _, issue := range c.Issues {
 		for _, r := range issue.Regexes {
@@ -65,14 +70,14 @@ func Input(r io.Reader, c *config.Config) (map[string][]Worklog, error) {
 	var err error
 	worklogs := map[string][]Worklog{}
 	buf := bufio.NewReader(r)
-
+	// define FSM
 	timesheet := TimesheetParser{
 		Machine: fsm.Machine{
 			State:       start, // initial state
 			Transitions: timesheetTransitions,
 		},
 	}
-
+	// define functions called for each state transition
 	timesheet.OnEntry = map[fsm.State][]fsm.TransitionFunc{
 		gotDuration: {
 			func(_ fsm.Event, s fsm.State) error {
@@ -142,7 +147,7 @@ func Input(r io.Reader, c *config.Config) (map[string][]Worklog, error) {
 			},
 		},
 	}
-
+	// enumerate the timesheet lines, emitting an appropriate event for each
 	for line, err := buf.ReadString('\n'); err != io.EOF; line, err = buf.ReadString('\n') {
 		if err != nil {
 			return nil, fmt.Errorf("couldn't read line: %v", err)
