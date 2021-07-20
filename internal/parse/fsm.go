@@ -37,6 +37,8 @@ type TimesheetParser struct {
 	duration time.Duration
 	// comment is appended to until worklog submission
 	comment []string
+	// defaultComment is appended to comment if comment is otherwise empty
+	defaultComment string
 	// issue is the JIRA issue name e.g. XYZ-123
 	issue string
 }

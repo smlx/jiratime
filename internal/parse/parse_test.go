@@ -55,6 +55,7 @@ func TestParseInput(t *testing.T) {
 							Regexes: wrapRegexes([]string{
 								"^fooCustomer devops( .+)?$",
 							}),
+							DefaultComment: "default fooCustomer work comment",
 						},
 						{
 							ID: "INTERNAL-1",
@@ -112,7 +113,7 @@ func TestParseInput(t *testing.T) {
 						Started: time.Date(now.Year(), now.Month(), now.Day(), 16, 30, 0,
 							0, now.Location()),
 						Duration: 30 * time.Minute,
-						Comment:  "platform ops\nexample5 cluster melting down again",
+						Comment:  "example5 cluster melting down again",
 					},
 				},
 				"FOO-12": {

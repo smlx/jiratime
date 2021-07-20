@@ -65,6 +65,20 @@ func getImplicitIssue(line string, c *config.Config) (string, string, string, er
 	return "", "", "", fmt.Errorf("couldn't match issue to line: %v", line)
 }
 
+// addWorklog adds the worklog entry defined in the fields of the given
+// TimesheetParser to the worklogs map.
+func addWorklog(worklogs map[string][]Worklog, timesheet *TimesheetParser) {
+	if len(timesheet.comment) == 0 && timesheet.defaultComment != "" {
+		timesheet.comment =
+			append(timesheet.comment, timesheet.defaultComment)
+	}
+	worklogs[timesheet.issue] = append(worklogs[timesheet.issue], Worklog{
+		Started:  timesheet.started,
+		Duration: timesheet.duration,
+		Comment:  strings.Join(timesheet.comment, "\n"),
+	})
+}
+
 // Input parses text form stdin and returns an issue-Worklog map.
 func Input(r io.Reader, c *config.Config) (map[string][]Worklog, error) {
 	var err error
@@ -84,11 +98,7 @@ func Input(r io.Reader, c *config.Config) (map[string][]Worklog, error) {
 				// If we are transitioning from start then this is the first entry and
 				// there is nothing to submit yet.
 				if s != start {
-					worklogs[timesheet.issue] = append(worklogs[timesheet.issue], Worklog{
-						Started:  timesheet.started,
-						Duration: timesheet.duration,
-						Comment:  strings.Join(timesheet.comment, "\n"),
-					})
+					addWorklog(worklogs, &timesheet)
 				}
 				timesheet.started, timesheet.duration, err =
 					parseTimeRange(timesheet.line)
@@ -118,13 +128,10 @@ func Input(r io.Reader, c *config.Config) (map[string][]Worklog, error) {
 			func(e fsm.Event, s fsm.State) error {
 				if s == gotDuration {
 					// we haven't identified an issue yet, so try to do so here
-					var defaultComment, comment string
-					timesheet.issue, defaultComment, comment, err =
+					var comment string
+					timesheet.issue, timesheet.defaultComment, comment, err =
 						getImplicitIssue(timesheet.line, c)
 					timesheet.comment = nil
-					if defaultComment != "" {
-						timesheet.comment = append(timesheet.comment, defaultComment)
-					}
 					if comment != "" {
 						timesheet.comment = append(timesheet.comment, comment)
 					}
@@ -137,12 +144,7 @@ func Input(r io.Reader, c *config.Config) (map[string][]Worklog, error) {
 		},
 		end: {
 			func(e fsm.Event, _ fsm.State) error {
-				// insert the final entry
-				worklogs[timesheet.issue] = append(worklogs[timesheet.issue], Worklog{
-					Started:  timesheet.started,
-					Duration: timesheet.duration,
-					Comment:  strings.Join(timesheet.comment, "\n"),
-				})
+				addWorklog(worklogs, &timesheet)
 				return nil
 			},
 		},
