@@ -65,6 +65,31 @@ func getImplicitIssue(line string, c *config.Config) (string, string, string, er
 	return "", "", "", fmt.Errorf("couldn't match issue to line: %v", line)
 }
 
+// addWorklog adds the worklog entry defined in the fields of the given
+// TimesheetParser to the worklogs map.
+func addWorklog(worklogs map[string][]Worklog, timesheet *TimesheetParser) {
+	if len(timesheet.comment) == 0 && timesheet.defaultComment != "" {
+		timesheet.comment =
+			append(timesheet.comment, timesheet.defaultComment)
+	}
+	worklogs[timesheet.issue] = append(worklogs[timesheet.issue], Worklog{
+		Started:  timesheet.started,
+		Duration: timesheet.duration,
+		Comment:  strings.Join(timesheet.comment, "\n"),
+	})
+}
+
+// matchIgnore returns true if the line matches any of the ignore regexes, and
+// false otherwise.
+func matchIgnore(c *config.Config, line string) bool {
+	for _, r := range c.Ignore {
+		if r.MatchString(line) {
+			return true
+		}
+	}
+	return false
+}
+
 // Input parses text form stdin and returns an issue-Worklog map.
 func Input(r io.Reader, c *config.Config) (map[string][]Worklog, error) {
 	var err error
@@ -84,11 +109,7 @@ func Input(r io.Reader, c *config.Config) (map[string][]Worklog, error) {
 				// If we are transitioning from start then this is the first entry and
 				// there is nothing to submit yet.
 				if s != start {
-					worklogs[timesheet.issue] = append(worklogs[timesheet.issue], Worklog{
-						Started:  timesheet.started,
-						Duration: timesheet.duration,
-						Comment:  strings.Join(timesheet.comment, "\n"),
-					})
+					addWorklog(worklogs, &timesheet)
 				}
 				timesheet.started, timesheet.duration, err =
 					parseTimeRange(timesheet.line)
@@ -96,14 +117,14 @@ func Input(r io.Reader, c *config.Config) (map[string][]Worklog, error) {
 			},
 		},
 		gotExplicitIssue: {
-			func(e fsm.Event, _ fsm.State) error {
-				if e == noMatch {
+			func(e fsm.Event, s fsm.State) error {
+				if s == gotExplicitIssue {
 					timesheet.comment =
 						append(timesheet.comment, strings.Trim(timesheet.line, " -"))
 					return nil
 				}
-				// we have just identified an explicit issue on the first line of an
-				// entry, so reset state
+				// we have identified an explicit issue on the first line of an
+				// entry, so reset timesheet state
 				matches := jiraIssue.FindStringSubmatch(timesheet.line)
 				timesheet.issue = matches[1]
 				if matches[2] == "" {
@@ -116,33 +137,25 @@ func Input(r io.Reader, c *config.Config) (map[string][]Worklog, error) {
 		},
 		gotImplicitIssue: {
 			func(e fsm.Event, s fsm.State) error {
-				if s == gotDuration {
-					// we haven't identified an issue yet, so try to do so here
-					var defaultComment, comment string
-					timesheet.issue, defaultComment, comment, err =
-						getImplicitIssue(timesheet.line, c)
-					timesheet.comment = nil
-					if defaultComment != "" {
-						timesheet.comment = append(timesheet.comment, defaultComment)
-					}
-					if comment != "" {
-						timesheet.comment = append(timesheet.comment, comment)
-					}
-					return err
+				if s == gotImplicitIssue {
+					timesheet.comment =
+						append(timesheet.comment, strings.Trim(timesheet.line, " -"))
+					return nil
 				}
-				// we are just appending comments here
-				timesheet.comment = append(timesheet.comment, timesheet.line)
-				return nil
+				// we haven't identified an issue yet, so try to do so here
+				var comment string
+				timesheet.issue, timesheet.defaultComment, comment, err =
+					getImplicitIssue(timesheet.line, c)
+				timesheet.comment = nil
+				if comment != "" {
+					timesheet.comment = append(timesheet.comment, comment)
+				}
+				return err
 			},
 		},
 		end: {
 			func(e fsm.Event, _ fsm.State) error {
-				// insert the final entry
-				worklogs[timesheet.issue] = append(worklogs[timesheet.issue], Worklog{
-					Started:  timesheet.started,
-					Duration: timesheet.duration,
-					Comment:  strings.Join(timesheet.comment, "\n"),
-				})
+				addWorklog(worklogs, &timesheet)
 				return nil
 			},
 		},
@@ -160,6 +173,10 @@ func Input(r io.Reader, c *config.Config) (map[string][]Worklog, error) {
 			}
 		case jiraIssue.MatchString(line):
 			if err = timesheet.Occur(matchExplicitIssue, line); err != nil {
+				return nil, err
+			}
+		case matchIgnore(c, line):
+			if err = timesheet.Occur(ignore, line); err != nil {
 				return nil, err
 			}
 		default:

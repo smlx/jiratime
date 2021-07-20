@@ -18,7 +18,8 @@ type SubmitCmd struct {
 
 // Run the Submit command.
 func (cmd *SubmitCmd) Run() error {
-	ctx, cancel := getContext(8 * time.Second)
+	// global timeout of 60 seconds
+	ctx, cancel := getContext(60 * time.Second)
 	defer cancel()
 	// read config file
 	conf, err := config.Read()

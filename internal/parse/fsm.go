@@ -21,6 +21,7 @@ const (
 	matchDuration
 	matchExplicitIssue
 	noMatch
+	ignore
 	eof
 )
 
@@ -37,6 +38,8 @@ type TimesheetParser struct {
 	duration time.Duration
 	// comment is appended to until worklog submission
 	comment []string
+	// defaultComment is appended to comment if comment is otherwise empty
+	defaultComment string
 	// issue is the JIRA issue name e.g. XYZ-123
 	issue string
 }
@@ -52,47 +55,60 @@ func (t *TimesheetParser) Occur(e fsm.Event, l string) error {
 // timesheetTransitions defines the transitions for the TimesheetParser FSM
 var timesheetTransitions = []fsm.Transition{
 	{
-		// first entry
+		// first entry, or after ignore
 		Src:   start,
 		Event: matchDuration,
 		Dst:   gotDuration,
 	}, {
-		// first line is XYZ-123...
+		// first line is XYZ-123, explicitly identifying an issue
 		Src:   gotDuration,
 		Event: matchExplicitIssue,
 		Dst:   gotExplicitIssue,
 	}, {
-		// subsequent lines after first line XYZ-123...
+		// subsequent lines after explicit issue are comments until the next
+		// duration is found
 		Src:   gotExplicitIssue,
 		Event: noMatch,
 		Dst:   gotExplicitIssue,
 	}, {
-		// attempt match against config
+		Src:   gotExplicitIssue,
+		Event: ignore,
+		Dst:   gotExplicitIssue,
+	}, {
+		// match first line of timesheet entry against config
 		Src:   gotDuration,
 		Event: noMatch,
 		Dst:   gotImplicitIssue,
 	}, {
-		// subsequent lines after config match
+		// subsequent lines after config match are comments until the next duration
+		// is found
 		Src:   gotImplicitIssue,
 		Event: noMatch,
 		Dst:   gotImplicitIssue,
 	}, {
-		// new entry after config match
+		Src:   gotImplicitIssue,
+		Event: ignore,
+		Dst:   gotImplicitIssue,
+	}, {
+		// issue hasn't been identified and match an ignore regex: return to start
+		Src:   gotDuration,
+		Event: ignore,
+		Dst:   start,
+	}, {
+		// new duration signifies a new timesheet entry
 		Src:   gotImplicitIssue,
 		Event: matchDuration,
 		Dst:   gotDuration,
 	}, {
-		// new entry after explicit issue
 		Src:   gotExplicitIssue,
 		Event: matchDuration,
 		Dst:   gotDuration,
 	}, {
-		// last entry
+		// reached the end of the timesheet
 		Src:   gotExplicitIssue,
 		Event: eof,
 		Dst:   end,
 	}, {
-		// last entry
 		Src:   gotImplicitIssue,
 		Event: eof,
 		Dst:   end,
