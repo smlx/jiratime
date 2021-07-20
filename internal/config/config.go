@@ -19,7 +19,8 @@ type Issue struct {
 
 // Config represents the structure of the config file.
 type Config struct {
-	Issues []Issue `json:"issues"`
+	Issues []Issue  `json:"issues"`
+	Ignore []Regexp `json:"ignore"`
 }
 
 // Read the config file.

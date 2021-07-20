@@ -230,6 +230,9 @@ func TestParseInput(t *testing.T) {
 							}),
 						},
 					},
+					Ignore: wrapRegexes([]string{
+						"^lunch$",
+					}),
 				},
 			},
 			expect: map[string][]parse.Worklog{
@@ -251,15 +254,15 @@ func TestParseInput(t *testing.T) {
 				},
 				"ABC-987": {
 					{
-						Started: time.Date(now.Year(), now.Month(), now.Day(), 12, 0, 0,
+						Started: time.Date(now.Year(), now.Month(), now.Day(), 13, 0, 0,
 							0, now.Location()),
 						Duration: 60 * time.Minute,
-						Comment:  "more meetings",
+						Comment:  "more meetings after...\nlunch",
 					},
 				},
 				"ABC-988": {
 					{
-						Started: time.Date(now.Year(), now.Month(), now.Day(), 13, 0, 0,
+						Started: time.Date(now.Year(), now.Month(), now.Day(), 14, 0, 0,
 							0, now.Location()),
 						Duration: 30 * time.Minute,
 						Comment:  "will the meetings\never stop?",
