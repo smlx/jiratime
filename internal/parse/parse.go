@@ -154,7 +154,10 @@ func Input(r io.Reader, c *config.Config) (map[string][]Worklog, error) {
 			},
 		},
 		end: {
-			func(e fsm.Event, _ fsm.State) error {
+			func(_ fsm.Event, s fsm.State) error {
+				if s == start {
+					return nil
+				}
 				addWorklog(worklogs, &timesheet)
 				return nil
 			},

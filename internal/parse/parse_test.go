@@ -270,6 +270,34 @@ func TestParseInput(t *testing.T) {
 				},
 			},
 		},
+		"worklog2": {
+			input: &parseInput{
+				dataFile: "testdata/worklog2",
+				config: &config.Config{
+					Issues: []config.Issue{
+						{
+							ID: "ADMIN-1",
+							Regexes: wrapRegexes([]string{
+								"^admin$",
+							}),
+						},
+					},
+					Ignore: wrapRegexes([]string{
+						"^lunch$",
+					}),
+				},
+			},
+			expect: map[string][]parse.Worklog{
+				"ADMIN-1": {
+					{
+						Started: time.Date(now.Year(), now.Month(), now.Day(), 9, 0, 0,
+							0, now.Location()),
+						Duration: 45 * time.Minute,
+						Comment:  "",
+					},
+				},
+			},
+		},
 	}
 	for name, tc := range testCases {
 		t.Run(name, func(tt *testing.T) {
