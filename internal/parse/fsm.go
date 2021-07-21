@@ -112,5 +112,9 @@ var timesheetTransitions = []fsm.Transition{
 		Src:   gotImplicitIssue,
 		Event: eof,
 		Dst:   end,
+	}, {
+		Src:   start,
+		Event: eof,
+		Dst:   end,
 	},
 }
