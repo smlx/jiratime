@@ -10,7 +10,7 @@ It is designed for use with timesheets logged in (neo)vim.
 
 `jiratime` only works with Atlassian Cloud hosted Jira, and does not support the deprecated self-hosted Jira server.
 
-<br clear="right" />
+<br clear="left" />
 
 ## Get it
 
