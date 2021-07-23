@@ -29,6 +29,7 @@ Here's an example `config.yml` with a list of regular expressions for implicitly
 If a regular expression has a capture group it will be trimmed of spaces and hyphens and added to the comment body.
 
 ```
+jiraURL: https://example.atlassian.net/
 issues:
 - id: XYZ-1
   defaultComment: email / slack / timesheets
