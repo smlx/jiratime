@@ -8,6 +8,10 @@
 `jiratime` makes it easy to submit timesheets to Jira quickly from the command line.
 It is designed for use with timesheets logged in (neo)vim.
 
+`jiratime` only works with Atlassian Cloud hosted Jira, and does not support the deprecated self-hosted Jira server.
+
+<br clear="right" />
+
 ## Get it
 
 Download the latest [release](https://github.com/smlx/jiratime/releases) on github, or:
