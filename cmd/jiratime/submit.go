@@ -13,7 +13,7 @@ import (
 // SubmitCmd represents the default `submit` command.
 type SubmitCmd struct {
 	DayOffset int  `kong:"short='d',help='submit time for a day at some offset to today'"`
-	DryRun    bool `kong:"help='read-only mode; do not actually make any changes in JIRA'"`
+	DryRun    bool `kong:"help='read-only mode; do not actually make any changes in Jira'"`
 }
 
 // Run the Submit command.

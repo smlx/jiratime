@@ -5,7 +5,7 @@ import (
 	"golang.org/x/oauth2"
 )
 
-// GetOAuth2Config gets an OAuth2 Config object configured for Atlassian JIRA
+// GetOAuth2Config gets an OAuth2 Config object configured for Atlassian Jira
 // Cloud.
 func GetOAuth2Config(auth *config.OAuth2) *oauth2.Config {
 	return &oauth2.Config{

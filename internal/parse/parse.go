@@ -49,7 +49,7 @@ func parseTimeRange(t string) (time.Time, time.Duration, error) {
 }
 
 // getImplicitIssue attempts to match a given string against a list of regexes
-// configured for a JIRA issue. It returns an error if no match can be found.
+// configured for a Jira issue. It returns an error if no match can be found.
 func getImplicitIssue(line string, c *config.Config) (string, string, string, error) {
 	for _, issue := range c.Issues {
 		for _, r := range issue.Regexes {
