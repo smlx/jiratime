@@ -1,9 +1,9 @@
-# JIRAtime
+# JiraTime
 
 ![Tag and Release](https://github.com/smlx/jiratime/workflows/Tag%20and%20Release/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/smlx/jiratime/badge.svg?branch=main)](https://coveralls.io/github/smlx/jiratime?branch=main)
 
-`jiratime` makes it easy to submit timesheets to JIRA quickly from the command line.
+`jiratime` makes it easy to submit timesheets to Jira quickly from the command line.
 It is designed for use with timesheets logged in (neo)vim.
 
 ## Get it
@@ -62,7 +62,7 @@ ever stop?
 
 #### Features
 
-Timesheet entries are converted to JIRA worklog records.
+Timesheet entries are converted to Jira worklog records.
 Each begins with a duration written as a time range in 24-hour format.
 
 ```
@@ -88,7 +88,7 @@ ABC-987
 lunch
 ```
 
-JIRA issues may be identified explicitly by putting the name of the issue at the start of the first line of the comment body.
+Jira issues may be identified explicitly by putting the name of the issue at the start of the first line of the comment body.
 
 ```
 0945-1100
@@ -99,7 +99,7 @@ will the meetings
 ever stop?
 ```
 
-JIRA issues may be identified implicitly by matching the first line against a configured regular expression (see Configuration below).
+Jira issues may be identified implicitly by matching the first line against a configured regular expression (see Configuration below).
 
 ```
 0900-0945
@@ -113,7 +113,7 @@ Timesheet entries may be ignored by matching the first line against a configured
 lunch
 ```
 
-Implicitly matched issues can have a default comment configured which will be automatically added to the JIRA worklog record if no comment is defined in the timesheet.
+Implicitly matched issues can have a default comment configured which will be automatically added to the Jira worklog record if no comment is defined in the timesheet.
 
 ```
 1100-1200
@@ -124,7 +124,7 @@ admin
 
 `jiratime` tries hard to submit timesheets atomically.
 That is, either all worklog records are submitted, or none are.
-It does this by checking that all issues identified are valid JIRA issues before submitting any worklogs.
+It does this by checking that all issues identified are valid Jira issues before submitting any worklogs.
 
 `jiratime` exits with a return code of zero and no output on success.
 On failure it will exit with a non-zero return code and a message on standard error.
@@ -133,10 +133,10 @@ On failure it will exit with a non-zero return code and a message on standard er
 
 ### Authorization Setup
 
-`jiratime` authenticates to JIRA as an OAuth2, client.
+`jiratime` authenticates to Jira as an OAuth2, client.
 This requires a one-time initial setup.
 
-#### Configure `jiratime` app in JIRA cloud
+#### Configure `jiratime` app in Jira cloud
 
 1. Visit Atlassian's developer console here, and log in: https://developer.atlassian.com/console/myapps/
 2. Create a new "OAuth 2.0 integration".
