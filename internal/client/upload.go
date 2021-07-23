@@ -13,7 +13,7 @@ import (
 
 // UploadWorklogs uploads the given worklogs to JIRA, with the
 // given day offset (e.g. -1 == yesterday).
-func UploadWorklogs(ctx context.Context,
+func UploadWorklogs(ctx context.Context, jiraURL string,
 	issueWorklogs map[string][]parse.Worklog, dayOffset int, dryRun bool) error {
 	// load the auth config to get the oauth2 token
 	auth, err := config.ReadAuth()
@@ -32,7 +32,7 @@ func UploadWorklogs(ctx context.Context,
 	oauth2Conf := GetOAuth2Config(auth)
 	httpClient := oauth2Conf.Client(ctx, auth.Token)
 	// wrap this http client in a jira client via jira.NewClient
-	c, err := jira.NewClient(httpClient, "https://amazeeio.atlassian.net/")
+	c, err := jira.NewClient(httpClient, jiraURL)
 	if err != nil {
 		return fmt.Errorf("couldn't get new JIRA client: %v", err)
 	}

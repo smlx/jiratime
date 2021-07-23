@@ -19,8 +19,9 @@ type Issue struct {
 
 // Config represents the structure of the config file.
 type Config struct {
-	Issues []Issue  `json:"issues"`
-	Ignore []Regexp `json:"ignore"`
+	JiraURL string   `json:"jiraURL"`
+	Issues  []Issue  `json:"issues"`
+	Ignore  []Regexp `json:"ignore"`
 }
 
 // Read the config file.
