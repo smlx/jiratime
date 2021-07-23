@@ -3,6 +3,8 @@
 ![Tag and Release](https://github.com/smlx/jiratime/workflows/Tag%20and%20Release/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/smlx/jiratime/badge.svg?branch=main)](https://coveralls.io/github/smlx/jiratime?branch=main)
 
+<img align="left" src="jiratime.jpg">
+
 `jiratime` makes it easy to submit timesheets to Jira quickly from the command line.
 It is designed for use with timesheets logged in (neo)vim.
 
