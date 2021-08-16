@@ -127,58 +127,6 @@ Comment:  fighting fires
 <!-- Example 2 -->
 <tr>
 <td><pre>
-1300-1400
-ABC-987
-- more meetings after...
-lunch
-</pre></td>
-<td>
-n/a
-</td>
-<td><pre>
-Issue:    ABC-987
-Start:    1300 (local TZ)
-Duration: 1 hour
-Comment:  more meetings after...
-          lunch
-</pre></td>
-</tr>
-<!-- Example 3 -->
-<tr>
-<td><pre>
-1400-1430
-ABC-988
-will the meetings
-ever stop?
-</pre></td>
-<td>
-n/a
-</td>
-<td><pre>
-Issue:    ABC-988
-Start:    1400
-Duration: 30 minutes
-Comment:  will the meetings
-          ever stop?
-</pre></td>
-</tr>
-<!-- Example 4 -->
-<tr>
-<td><pre>
-1200-1300
-lunch
-</pre></td>
-<td><pre>
-ignore:
-- ^lunch$
-</pre></td>
-<td><pre>
-n/a (this entry is skipped)
-</pre></td>
-</tr>
-<!-- Example 5 -->
-<tr>
-<td><pre>
 1100-1200
 admin
 </pre></td>
@@ -195,6 +143,58 @@ Issue:    XYZ-1
 Start:    1100 (local TZ)
 Duration: 1 hour
 Comment:  email / slack / timesheets
+</pre></td>
+</tr>
+<!-- Example 3 -->
+<tr>
+<td><pre>
+1200-1300
+lunch
+</pre></td>
+<td><pre>
+ignore:
+- ^lunch$
+</pre></td>
+<td><pre>
+n/a (this entry is skipped)
+</pre></td>
+</tr>
+<!-- Example 4 -->
+<tr>
+<td><pre>
+1300-1400
+ABC-987
+- more meetings after...
+lunch
+</pre></td>
+<td>
+n/a
+</td>
+<td><pre>
+Issue:    ABC-987
+Start:    1300 (local TZ)
+Duration: 1 hour
+Comment:  more meetings after...
+          lunch
+</pre></td>
+</tr>
+<!-- Example 5 -->
+<tr>
+<td><pre>
+1400-1430
+ABC-988
+will the meetings
+ever stop?
+</pre></td>
+<td>
+n/a
+</td>
+<td><pre>
+Issue:    ABC-988
+Start:    1400
+Duration: 30 minutes
+Comment:  will the meetings
+          ever stop?
 </pre></td>
 </tr>
 </table>
