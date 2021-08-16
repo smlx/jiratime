@@ -46,7 +46,8 @@ ignore:
 ### Timesheet format
 
 The timesheet format is minimal and opinionated.
-Here's a full timesheet example, and a description of the major features.
+
+#### Sample timesheet
 
 ```
 0900-0945
@@ -67,65 +68,136 @@ will the meetings
 ever stop?
 ```
 
-#### Features
+#### Major features
 
-Timesheet entries are converted to Jira worklog records.
-Each begins with a duration written as a time range in 24-hour format.
+* Timesheet entries are converted to Jira worklog records.
+* Each begins with a duration written as a time range in 24-hour format.
+* The comment body of a timesheet entry is anything on the first line following an issue match, and any lines below before the next duration or end of the timesheet.
+* Regular expressions for implicitly identifying issues may have a capture group. In that case the capture group becomes part of the comment body.
+* Comment lines are trimmed of spaces and hyphens and added to the comment body.
+* Jira issues may be identified explicitly by putting the name of the issue at the start of the first line of the comment body.
+* Jira issues may be identified implicitly by matching the first line against a configured regular expression (see Configuration above).
+* Timesheet entries may be ignored by matching the first line against a configured regular expression (see Configuration below).
+* Implicitly matched issues can have a default comment configured which will be automatically added to the Jira worklog record if no comment is defined in the timesheet.
 
-```
+#### Timesheet entry examples
+
+<table>
+<tr>
+<th>Timesheet Entry</th><th>Configuration</th><th>Jira Worklog Record</th>
+</tr>
+<!-- Example 0 -->
+<tr>
+<td><pre>
 0900-0945
 admin - TPS report cover sheet
-```
-
-The comment body of a timesheet entry is anything on the first line following an issue match, and any lines below before the next duration or end of the timesheet.
-
-Regular expressions for implicitly identifying issues may have a capture group.
-In that case the capture group becomes part of the comment body.
-
-Comment lines are trimmed of spaces and hyphens and added to the comment body.
-
-```
-0900-0945
-admin - TPS report cover sheet
+</pre></td>
+<td><pre>
+issues:
+- id: XYZ-1
+  defaultComment:
+    email / slack / timesheets
+  regexes:
+  - ^admin( .+)?$
+</pre></td>
+<td><pre>
+Issue:    XYZ-1
+Start:    0900 (local TZ)
+Duration: 45 minutes
+Comment:  TPS report cover sheet
+</pre></td>
+</tr>
+</tr>
+<!-- Example 1 -->
+<tr>
+<td><pre>
 0945-1100
 XYZ-123 - fighting fires
+</pre></td>
+<td>
+n/a
+</td>
+<td><pre>
+Issue:    XYZ-123
+Start:    0945 (local TZ)
+Duration: 1 hour, 15 minutes
+Comment:  fighting fires
+</pre></td>
+</tr>
+<!-- Example 2 -->
+<tr>
+<td><pre>
 1300-1400
 ABC-987
 - more meetings after...
 lunch
-```
-
-Jira issues may be identified explicitly by putting the name of the issue at the start of the first line of the comment body.
-
-```
-0945-1100
-XYZ-123 - fighting fires
+</pre></td>
+<td>
+n/a
+</td>
+<td><pre>
+Issue:    ABC-987
+Start:    1300 (local TZ)
+Duration: 1 hour
+Comment:  more meetings after...
+          lunch
+</pre></td>
+</tr>
+<!-- Example 3 -->
+<tr>
+<td><pre>
 1400-1430
 ABC-988
 will the meetings
 ever stop?
-```
-
-Jira issues may be identified implicitly by matching the first line against a configured regular expression (see Configuration below).
-
-```
-0900-0945
-admin - TPS report cover sheet
-```
-
-Timesheet entries may be ignored by matching the first line against a configured regular expression (see Configuration below).
-
-```
+</pre></td>
+<td>
+n/a
+</td>
+<td><pre>
+Issue:    ABC-988
+Start:    1400
+Duration: 30 minutes
+Comment:  will the meetings
+          ever stop?
+</pre></td>
+</tr>
+<!-- Example 4 -->
+<tr>
+<td><pre>
 1200-1300
 lunch
-```
-
-Implicitly matched issues can have a default comment configured which will be automatically added to the Jira worklog record if no comment is defined in the timesheet.
-
-```
+</pre></td>
+<td><pre>
+ignore:
+- ^lunch$
+</pre></td>
+<td><pre>
+n/a (this entry is skipped)
+</pre></td>
+</tr>
+<!-- Example 5 -->
+<tr>
+<td><pre>
 1100-1200
 admin
-```
+</pre></td>
+<td><pre>
+issues:
+- id: XYZ-1
+  defaultComment:
+    email / slack / timesheets
+  regexes:
+  - ^admin( .+)?$
+</pre></td>
+<td><pre>
+Issue:    XYZ-1
+Start:    1100 (local TZ)
+Duration: 1 hour
+Comment:  email / slack / timesheets
+</pre></td>
+</tr>
+</table>
 
 ### Philosophy
 
