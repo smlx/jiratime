@@ -6,7 +6,7 @@
 <img align="left" src="jiratime.jpg">
 
 `jiratime` makes it easy to submit timesheets to Jira quickly from the command line.
-It is designed for use with timesheets logged in (neo)vim.
+It accepts timesheets on standard input so works well with any editor that lets you pipe chunks of text to external commands, such as (neo)vim.
 
 `jiratime` only works with Atlassian Cloud hosted Jira, and does not support the deprecated self-hosted Jira server.
 
@@ -26,7 +26,6 @@ go install github.com/smlx/jiratime/cmd/jiratime@latest
 
 `jiratime` reads configuration from `$XDG_CONFIG_HOME/jiratime/config.yml`.
 Here's an example `config.yml` with a list of regular expressions for implicitly identifying issues, and another which will cause the timesheet entry to be ignored.
-If a regular expression has a capture group it will be trimmed of spaces and hyphens and added to the comment body.
 
 ```
 jiraURL: https://example.atlassian.net/
@@ -68,7 +67,7 @@ will the meetings
 ever stop?
 ```
 
-#### Major features
+#### Features
 
 * Timesheet entries are converted to Jira worklog records.
 * Each begins with a duration written as a time range in 24-hour format.
