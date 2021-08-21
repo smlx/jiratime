@@ -44,7 +44,7 @@ type TimesheetParser struct {
 	issue string
 }
 
-// Occur handles an event occurence.
+// Occur handles an event occurrence.
 func (t *TimesheetParser) Occur(e fsm.Event, l string) error {
 	t.mu.Lock()
 	defer t.mu.Unlock()

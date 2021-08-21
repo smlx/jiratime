@@ -2,6 +2,7 @@
 
 ![Tag and Release](https://github.com/smlx/jiratime/workflows/Tag%20and%20Release/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/smlx/jiratime/badge.svg?branch=main)](https://coveralls.io/github/smlx/jiratime?branch=main)
+[![Go Report Card](https://goreportcard.com/badge/github.com/smlx/jiratime)](https://goreportcard.com/report/github.com/smlx/jiratime)
 
 <img align="left" src="jiratime.jpg">
 
