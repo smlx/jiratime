@@ -117,7 +117,7 @@ func Input(r io.Reader, c *config.Config) (map[string][]Worklog, error) {
 			},
 		},
 		gotExplicitIssue: {
-			func(e fsm.Event, s fsm.State) error {
+			func(_ fsm.Event, s fsm.State) error {
 				if s == gotExplicitIssue {
 					timesheet.comment =
 						append(timesheet.comment, strings.Trim(timesheet.line, " -"))
@@ -136,7 +136,7 @@ func Input(r io.Reader, c *config.Config) (map[string][]Worklog, error) {
 			},
 		},
 		gotImplicitIssue: {
-			func(e fsm.Event, s fsm.State) error {
+			func(_ fsm.Event, s fsm.State) error {
 				if s == gotImplicitIssue {
 					timesheet.comment =
 						append(timesheet.comment, strings.Trim(timesheet.line, " -"))
