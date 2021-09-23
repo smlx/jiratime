@@ -8,7 +8,7 @@ require (
 	github.com/andygrunwald/go-jira v1.14.0
 	github.com/smlx/fsm v0.2.0
 	golang.org/x/oauth2 v0.0.0-20210628180205-a41e5a781914
-	sigs.k8s.io/yaml v1.2.0
+	sigs.k8s.io/yaml v1.3.0
 )
 
 require (
@@ -21,5 +21,5 @@ require (
 	golang.org/x/net v0.0.0-20200822124328-c89045814202 // indirect
 	google.golang.org/appengine v1.6.6 // indirect
 	google.golang.org/protobuf v1.25.0 // indirect
-	gopkg.in/yaml.v2 v2.2.8 // indirect
+	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
