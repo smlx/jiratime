@@ -9,6 +9,7 @@ import (
 	jira "github.com/andygrunwald/go-jira"
 	"github.com/smlx/jiratime/internal/config"
 	"github.com/smlx/jiratime/internal/parse"
+	"golang.org/x/oauth2"
 )
 
 // UploadWorklogs uploads the given worklogs to Jira, with the
@@ -30,7 +31,8 @@ func UploadWorklogs(ctx context.Context, jiraURL string,
 	// create an http client using the oauth2 token. this will auto-refresh the
 	// token as required.
 	oauth2Conf := GetOAuth2Config(auth)
-	httpClient := oauth2Conf.Client(ctx, auth.Token)
+	tokenSource := oauth2Conf.TokenSource(ctx, auth.Token)
+	httpClient := oauth2.NewClient(ctx, tokenSource)
 	// wrap this http client in a jira client via jira.NewClient
 	c, err := jira.NewClient(httpClient, jiraURL)
 	if err != nil {
@@ -43,6 +45,20 @@ func UploadWorklogs(ctx context.Context, jiraURL string,
 			return fmt.Errorf("couldn't get Jira issue %s: %v", issue, err)
 		}
 	}
+	// persist the token, as Atlassian rotates refresh tokens
+	newTok, err := tokenSource.Token()
+	if err != nil {
+		return fmt.Errorf("couldn't get Token from oauth2.TokenSource: %v", err)
+	}
+	err = config.WriteAuth(&config.OAuth2{
+		ClientID: auth.ClientID,
+		Secret:   auth.Secret,
+		Token:    newTok,
+	})
+	if err != nil {
+		return fmt.Errorf("couldn't persist new token: %v", err)
+	}
+	// exit early in dry-run mode
 	if dryRun {
 		log.Println("dry-run mode: not submitting any work logs")
 		return nil
@@ -63,7 +79,5 @@ func UploadWorklogs(ctx context.Context, jiraURL string,
 			}
 		}
 	}
-	// TODO: update the stored token in auth.yml? Not sure if it is even possible
-	// to pull that back out of the httpClient...
 	return nil
 }
