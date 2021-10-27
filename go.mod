@@ -3,7 +3,7 @@ module github.com/smlx/jiratime
 go 1.17
 
 require (
-	github.com/adrg/xdg v0.3.4
+	github.com/adrg/xdg v0.4.0
 	github.com/alecthomas/kong v0.2.17
 	github.com/andygrunwald/go-jira v1.14.0
 	github.com/smlx/fsm v0.2.0
@@ -19,6 +19,7 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/trivago/tgo v1.0.7 // indirect
 	golang.org/x/net v0.0.0-20200822124328-c89045814202 // indirect
+	golang.org/x/sys v0.0.0-20211025201205-69cdffdb9359 // indirect
 	google.golang.org/appengine v1.6.6 // indirect
 	google.golang.org/protobuf v1.25.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
