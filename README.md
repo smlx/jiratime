@@ -219,7 +219,7 @@ Try refreshing after a few minutes.
 `jiratime` submits all times in your local timezone.
 Jira has a single timezone that it uses to display worklogs regardless of localisation settings.
 I can't see this timezone displayed anywhere in the UI, but you can see it via the API.
-Use the `check-worklog.sh` script to dump issue worklogs, including timezone.
+Use `scripts/check-worklog.sh` to dump issue worklogs, including timezone.
 
 ### How do I submit timesheets for yesterday?
 
