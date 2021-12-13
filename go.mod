@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/adrg/xdg v0.4.0
-	github.com/alecthomas/kong v0.2.20
+	github.com/alecthomas/kong v0.2.22
 	github.com/andygrunwald/go-jira v1.14.0
 	github.com/smlx/fsm v0.2.0
 	golang.org/x/oauth2 v0.0.0-20210628180205-a41e5a781914
