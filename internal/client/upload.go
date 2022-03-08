@@ -26,7 +26,7 @@ func UploadWorklogs(ctx context.Context, jiraURL string,
 		return fmt.Errorf("couldn't find oauth2 configuration")
 	}
 	if auth.Token.AccessToken == "" || auth.Token.RefreshToken == "" {
-		return fmt.Errorf("Missing access_token or refresh_token. Please run `authorize` to refresh tokens")
+		return fmt.Errorf("missing access_token or refresh_token. Please run `authorize` to refresh tokens")
 	}
 	// create an http client using the oauth2 token. this will auto-refresh the
 	// token as required.
