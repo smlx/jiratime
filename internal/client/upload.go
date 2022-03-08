@@ -40,7 +40,7 @@ func UploadWorklogs(ctx context.Context, jiraURL string,
 	}
 	// check that all the issues in worklogs exist
 	for issue := range issueWorklogs {
-		_, _, err := c.Issue.GetWithContext(ctx, issue, nil)
+		_, _, err := c.Issue.GetTransitionsWithContext(ctx, issue)
 		if err != nil {
 			return fmt.Errorf("couldn't get Jira issue %s: %v", issue, err)
 		}
