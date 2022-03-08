@@ -149,7 +149,19 @@ This requires a one-time initial setup.
 ##### Scopes
 
 1. Select "Permissions", then "Add", and "Configure" the "Jira platform REST API".
-2. The "View user profiles" scope will already be added. Add the "View Jira issue data" and "Create and manage issues" scopes too.
+2. Ensure these scopes are selected:
+   * `read:avatar:jira`
+   * `read:field-configuration:jira`
+   * `read:group:jira`
+   * `read:issue-worklog.property:jira`
+   * `read:issue-worklog:jira`
+   * `read:issue.transition:jira`
+   * `read:project-role:jira`
+   * `read:status:jira`
+   * `read:user:jira`
+   * `write:issue-worklog.property:jira`
+   * `write:issue-worklog:jira`
+   * `write:issue.time-tracking:jira`
 
 ##### Authorization callback URL
 
