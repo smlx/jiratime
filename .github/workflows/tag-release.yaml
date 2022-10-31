@@ -33,6 +33,8 @@ jobs:
           git push --tags
           echo "::set-output name=new::true"
         fi
+    - name: Set up environment
+      run: echo "GOVERSION=$(go version)" >> $GITHUB_ENV
     - name: Run GoReleaser
       if: steps.tag.outputs.new == 'true'
       uses: goreleaser/goreleaser-action@v3
