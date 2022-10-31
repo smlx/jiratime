@@ -18,7 +18,7 @@ type Auth struct {
 
 // OAuth2 is a config entry containing oauth2 secrets
 type OAuth2 struct {
-	ClientID string        `json:"clientID,omitempty"`
+	ClientID string        `json:"clientID"`
 	Secret   string        `json:"secret,omitempty"`
 	Token    *oauth2.Token `json:"token"`
 }
