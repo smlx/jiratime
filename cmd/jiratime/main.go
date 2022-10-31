@@ -10,11 +10,6 @@ import (
 	"github.com/alecthomas/kong"
 )
 
-var (
-	version string
-	date    string
-)
-
 // CLI represents the command-line interface.
 type CLI struct {
 	Submit    SubmitCmd    `kong:"cmd,default=1,help='(default) Submit times'"`
