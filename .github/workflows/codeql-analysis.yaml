@@ -7,8 +7,6 @@ on:
     # The branches below must be a subset of the branches above
     branches:
     - main
-  schedule:
-  - cron: '29 15 * * 1'
 
 jobs:
   analyze:
@@ -17,7 +15,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'go' ]
+        language:
+        - go
         # CodeQL supports [ 'cpp', 'csharp', 'go', 'java', 'javascript', 'python' ]
     steps:
     - name: Checkout repository
