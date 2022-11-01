@@ -97,9 +97,6 @@ func (cmd *AuthorizeCmd) Run() error {
 		log.Fatal(err)
 	}
 	auth.Token = tok
-	// purge the client secret before writing, since it is not required once a
-	// token is obtained
-	auth.Secret = ""
 	if err = config.WriteAuth(auth); err != nil {
 		return fmt.Errorf("couldn't write config: %v", err)
 	}
