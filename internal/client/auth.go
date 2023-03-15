@@ -1,3 +1,4 @@
+// Package client implements a JIRA REST API client.
 package client
 
 import (
@@ -14,18 +15,8 @@ func GetOAuth2Config(auth *config.OAuth2) *oauth2.Config {
 		// offline_access requests a refresh token
 		Scopes: []string{
 			"offline_access",
-			"read:avatar:jira",
-			"read:field-configuration:jira",
-			"read:group:jira",
-			"read:issue-worklog.property:jira",
-			"read:issue-worklog:jira",
-			"read:issue.transition:jira",
-			"read:project-role:jira",
-			"read:status:jira",
-			"read:user:jira",
-			"write:issue-worklog.property:jira",
-			"write:issue-worklog:jira",
-			"write:issue.time-tracking:jira",
+			"read:jira-work",
+			"write:jira-work",
 		},
 		Endpoint: oauth2.Endpoint{
 			TokenURL: "https://auth.atlassian.com/oauth/token",
