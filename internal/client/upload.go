@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/http"
 	"time"
 
 	jira "github.com/andygrunwald/go-jira"
@@ -11,6 +12,8 @@ import (
 	"github.com/smlx/jiratime/internal/parse"
 	"golang.org/x/oauth2"
 )
+
+const requestRetries = 4
 
 // UploadWorklogs uploads the given worklogs to Jira, with the
 // given day offset (e.g. -1 == yesterday).
@@ -26,7 +29,8 @@ func UploadWorklogs(ctx context.Context, jiraURL string,
 		return fmt.Errorf("couldn't find oauth2 configuration")
 	}
 	if auth.Token.AccessToken == "" || auth.Token.RefreshToken == "" {
-		return fmt.Errorf("missing access_token or refresh_token. Please run `authorize` to refresh tokens")
+		return fmt.Errorf("missing access_token or refresh_token." +
+			" Please run `authorize` to refresh tokens")
 	}
 	// create an http client using the oauth2 token. this will auto-refresh the
 	// token as required.
@@ -40,8 +44,15 @@ func UploadWorklogs(ctx context.Context, jiraURL string,
 	}
 	// check that all the issues in worklogs exist
 	for issue := range issueWorklogs {
-		_, _, err := c.Issue.GetWithContext(ctx, issue, nil)
-		if err != nil {
+	retryGetIssue:
+		for i := 0; i < requestRetries; i++ {
+			_, response, err := c.Issue.GetWithContext(ctx, issue, nil)
+			if err == nil {
+				break retryGetIssue
+			}
+			if response.StatusCode == http.StatusUnauthorized {
+				continue
+			}
 			return fmt.Errorf("couldn't get Jira issue %s: %v", issue, err)
 		}
 	}
@@ -73,8 +84,15 @@ func UploadWorklogs(ctx context.Context, jiraURL string,
 				TimeSpentSeconds: int(worklog.Duration.Seconds()),
 				Started:          &started,
 			}
-			_, _, err := c.Issue.AddWorklogRecordWithContext(ctx, issue, &wr)
-			if err != nil {
+		retryAddWorklog:
+			for i := 0; i < requestRetries; i++ {
+				_, response, err := c.Issue.AddWorklogRecordWithContext(ctx, issue, &wr)
+				if err == nil {
+					break retryAddWorklog
+				}
+				if response.StatusCode == http.StatusNotFound {
+					continue
+				}
 				return fmt.Errorf("couldn't add worklog record to issue %s: %v", issue, err)
 			}
 		}
