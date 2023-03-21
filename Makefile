@@ -14,4 +14,4 @@ generate: mod-tidy
 
 .PHONY: build
 build:
-	GOVERSION=$$(go version) goreleaser build  --rm-dist --debug --snapshot
+	GOVERSION=$$(go version) goreleaser build --clean --debug --snapshot
