@@ -133,12 +133,13 @@ Unfortunately there is no transactional batch API for Jira worklogs.
 `jiratime` exits with a return code of zero and no output on success.
 On failure it will exit with a non-zero return code and a message on standard error.
 
-## Usage
+## Authorization Setup
 
-### Authorization Setup
+`jiratime` authentication requires a one-time initial setup.
 
-`jiratime` authenticates to Jira as an OAuth2 client.
-This requires a one-time initial setup.
+`jiratime` can authenticate using OAuth2 (more secure, more complex setup, the default), or using an API Key and HTTP Basic Auth (less secure, but simpler).
+
+### OAuth2
 
 #### Configure jiratime app in Jira cloud
 
@@ -150,18 +151,8 @@ This requires a one-time initial setup.
 
 1. Select "Permissions", then "Add", and "Configure" the "Jira platform REST API".
 2. Ensure these scopes are selected:
-   * `read:avatar:jira`
-   * `read:field-configuration:jira`
-   * `read:group:jira`
-   * `read:issue-worklog.property:jira`
-   * `read:issue-worklog:jira`
-   * `read:issue.transition:jira`
-   * `read:project-role:jira`
-   * `read:status:jira`
-   * `read:user:jira`
-   * `write:issue-worklog.property:jira`
-   * `write:issue-worklog:jira`
-   * `write:issue.time-tracking:jira`
+   * `read:jira-work`
+   * `write:jira-work`
 
 ##### Authorization callback URL
 
@@ -177,7 +168,7 @@ This requires a one-time initial setup.
 
 Create `$XDG_CONFIG_HOME/jiratime/auth.yml` and add your app credentials:
 
-```
+```yaml
 oauth2:
   clientID: chiYahchob7xoThahvohH5quae6Di0Ee
   secret: HxHOiN3bD5l93X3qugp9bHI8EKEJ7xVV4vcj6tG3vr7GFqxtxruMrkLcgtZAOPrZ
@@ -191,6 +182,21 @@ Authorization successful. You may now close this page.
 ```
 
 `$XDG_CONFIG_HOME/jiratime/auth.yml` now contains a token that `jiratime` will use and automatically refresh as required.
+
+### Basic Auth
+
+1. Visit Atlassian's [developer console](https://developer.atlassian.com/console/myapps/), and log in.
+2. Create a new API Key.
+3. Add the credentials to `$XDG_CONFIG_HOME/jiratime/basicauth.yml`.
+
+Example:
+
+```yaml
+user: my.name@example.com
+apiKey: SZ8411BnS9dKw2FDArWAe9eYiToNTx6ugtCzR2UTtaSFmXnw16bYcBuiLFYuqSffnFEzdXti8HcVRWPaLjPxFaOx7KVlckD2amFoxiiwK2hTBlfYU62CrJJ3VfZprwf3
+```
+
+## Usage
 
 ### Timesheet submission
 
