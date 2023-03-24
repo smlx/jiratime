@@ -14,6 +14,7 @@ import (
 type SubmitCmd struct {
 	DayOffset int  `kong:"short='d',help='submit time for a day at some offset to today'"`
 	DryRun    bool `kong:"help='read-only mode; do not actually make any changes in Jira'"`
+	BasicAuth bool `kong:"help='use basic auth instead of OAuth2'"`
 }
 
 // Run the Submit command.
@@ -34,7 +35,7 @@ func (cmd *SubmitCmd) Run() error {
 	}
 	// push the worklogs into jira
 	err = client.UploadWorklogs(ctx, conf.JiraURL, worklogs, cmd.DayOffset,
-		cmd.DryRun)
+		cmd.DryRun, cmd.BasicAuth)
 	if err != nil {
 		return fmt.Errorf("couldn't upload worklogs: %v", err)
 	}
