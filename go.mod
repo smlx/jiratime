@@ -7,6 +7,7 @@ require (
 	github.com/alecthomas/kong v0.7.1
 	github.com/andygrunwald/go-jira v1.16.0
 	github.com/smlx/fsm v0.2.1
+	golang.org/x/exp v0.0.0-20230321023759-10a507213a29
 	golang.org/x/oauth2 v0.7.0
 	sigs.k8s.io/yaml v1.3.0
 )
