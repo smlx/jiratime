@@ -1,3 +1,4 @@
+// Package main implements the command-line interface to jiratime.
 package main
 
 import (
@@ -12,9 +13,10 @@ import (
 
 // CLI represents the command-line interface.
 type CLI struct {
-	Submit    SubmitCmd    `kong:"cmd,default=1,help='(default) Submit times'"`
-	Authorize AuthorizeCmd `kong:"cmd,aliases='auth',help='Get OAuth2 client token'"`
-	Version   VersionCmd   `kong:"cmd,help='Print version information'"`
+	Submit       SubmitCmd       `kong:"cmd,default=1,help='(default) Submit times'"`
+	Authorize    AuthorizeCmd    `kong:"cmd,aliases='auth',help='Get OAuth2 client token'"`
+	DumpWorklogs DumpWorklogsCmd `kong:"cmd,help='Dump Worklog records in JSON format'"`
+	Version      VersionCmd      `kong:"cmd,help='Print version information'"`
 }
 
 // getContext starts a goroutine to handle ^C gracefully, and returns a
