@@ -25,10 +25,9 @@ func getAllIssues(ctx context.Context, c *jira.Client,
 		if err != nil {
 			return nil, fmt.Errorf("couldn't search: %v", err)
 		}
-		total := resp.Total
 		issues = append(issues, chunk...)
 		last = resp.StartAt + len(chunk)
-		if last >= total {
+		if last >= resp.Total {
 			return issues, nil
 		}
 	}
@@ -58,7 +57,9 @@ func getWorklogRecords(ctx context.Context, c *jira.Client,
 		if err != nil {
 			return nil, fmt.Errorf("couldn't search: %v", err)
 		}
-		total := resp.Total
+		if resp.StatusCode >= 400 {
+			return nil, fmt.Errorf("bad response %d: %v", resp.StatusCode, resp.Status)
+		}
 		// filter the worklog records by author
 		for _, wlr := range worklog.Worklogs {
 			if wlr.Author.DisplayName == authorName {
@@ -66,8 +67,10 @@ func getWorklogRecords(ctx context.Context, c *jira.Client,
 			}
 		}
 		last = resp.StartAt + len(worklog.Worklogs)
-		// return if we have paged through all records
-		if last >= total {
+		// return if we have paged through all records otherwise get the next page
+		// NOTE: the jira library is buggy and returns resp.Total == 0 here, so
+		// check for "last page" indirectly.
+		if len(worklog.Worklogs) < opt.MaxResults {
 			return wlrs, nil
 		}
 	}
