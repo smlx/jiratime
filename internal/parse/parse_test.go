@@ -2,10 +2,11 @@ package parse_test
 
 import (
 	"os"
-	"reflect"
 	"regexp"
 	"testing"
 	"time"
+
+	"github.com/alecthomas/assert"
 
 	"github.com/smlx/jiratime/internal/config"
 	"github.com/smlx/jiratime/internal/parse"
@@ -298,6 +299,49 @@ func TestParseInput(t *testing.T) {
 				},
 			},
 		},
+		"explicit ticket with no comment": {
+			input: &parseInput{
+				dataFile: "testdata/worklog3",
+				config: &config.Config{
+					Issues: []config.Issue{
+						{
+							ID:             "ADMIN-1",
+							DefaultComment: "email and stuff",
+							Regexes: wrapRegexes([]string{
+								"^admin$",
+							}),
+						},
+					},
+					Ignore: wrapRegexes([]string{
+						"^lunch$",
+					}),
+				},
+			},
+			expect: map[string][]parse.Worklog{
+				"ADMIN-1": {
+					{
+						Started: time.Date(now.Year(), now.Month(), now.Day(), 10, 0, 0,
+							0, now.Location()),
+						Duration: 1 * time.Hour,
+						Comment:  "email and stuff",
+					},
+				},
+				"aiop-1005": {
+					{
+						Started: time.Date(now.Year(), now.Month(), now.Day(), 11, 0, 0,
+							0, now.Location()),
+						Duration: 1*time.Hour + 45*time.Minute,
+						Comment:  "boggling intelligently",
+					},
+					{
+						Started: time.Date(now.Year(), now.Month(), now.Day(), 12, 45, 0,
+							0, now.Location()),
+						Duration: 15 * time.Minute,
+						Comment:  "",
+					},
+				},
+			},
+		},
 	}
 	for name, tc := range testCases {
 		t.Run(name, func(tt *testing.T) {
@@ -309,9 +353,7 @@ func TestParseInput(t *testing.T) {
 			if err != nil {
 				tt.Fatal(err)
 			}
-			if !reflect.DeepEqual(worklogs, tc.expect) {
-				tt.Fatalf("expected:\n%v\n\n---\n\ngot:\n%v", tc.expect, worklogs)
-			}
+			assert.Equal(tt, tc.expect, worklogs, "worklogs")
 		})
 	}
 }

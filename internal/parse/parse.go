@@ -1,3 +1,4 @@
+// Package parse implements parsing of the jiratime work log format.
 package parse
 
 import (
@@ -105,10 +106,10 @@ func Input(r io.Reader, c *config.Config) (map[string][]Worklog, error) {
 	// define functions called for each state transition
 	timesheet.OnEntry = map[fsm.State][]fsm.TransitionFunc{
 		gotDuration: {
-			func(_ fsm.Event, s fsm.State) error {
+			func(_ fsm.Event, src fsm.State) error {
 				// If we are transitioning from start then this is the first entry and
 				// there is nothing to submit yet.
-				if s != start {
+				if src != start {
 					addWorklog(worklogs, &timesheet)
 				}
 				timesheet.started, timesheet.duration, err =
@@ -117,8 +118,8 @@ func Input(r io.Reader, c *config.Config) (map[string][]Worklog, error) {
 			},
 		},
 		gotExplicitIssue: {
-			func(_ fsm.Event, s fsm.State) error {
-				if s == gotExplicitIssue {
+			func(_ fsm.Event, src fsm.State) error {
+				if src == gotExplicitIssue {
 					timesheet.comment =
 						append(timesheet.comment, strings.Trim(timesheet.line, " -"))
 					return nil
@@ -136,8 +137,8 @@ func Input(r io.Reader, c *config.Config) (map[string][]Worklog, error) {
 			},
 		},
 		gotImplicitIssue: {
-			func(_ fsm.Event, s fsm.State) error {
-				if s == gotImplicitIssue {
+			func(_ fsm.Event, src fsm.State) error {
+				if src == gotImplicitIssue {
 					timesheet.comment =
 						append(timesheet.comment, strings.Trim(timesheet.line, " -"))
 					return nil
@@ -154,8 +155,8 @@ func Input(r io.Reader, c *config.Config) (map[string][]Worklog, error) {
 			},
 		},
 		end: {
-			func(_ fsm.Event, s fsm.State) error {
-				if s == start {
+			func(_ fsm.Event, src fsm.State) error {
+				if src == start {
 					return nil
 				}
 				addWorklog(worklogs, &timesheet)

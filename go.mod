@@ -4,6 +4,7 @@ go 1.19
 
 require (
 	github.com/adrg/xdg v0.4.0
+	github.com/alecthomas/assert v1.0.0
 	github.com/alecthomas/kong v0.7.1
 	github.com/andygrunwald/go-jira v1.16.0
 	github.com/smlx/fsm v0.2.1
@@ -13,11 +14,15 @@ require (
 )
 
 require (
+	github.com/alecthomas/colour v0.1.0 // indirect
+	github.com/alecthomas/repr v0.1.0 // indirect
 	github.com/fatih/structs v1.1.0 // indirect
 	github.com/golang-jwt/jwt/v4 v4.4.2 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
+	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/sergi/go-diff v1.2.0 // indirect
 	github.com/trivago/tgo v1.0.7 // indirect
 	golang.org/x/net v0.10.0 // indirect
 	golang.org/x/sys v0.8.0 // indirect
