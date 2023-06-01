@@ -112,6 +112,11 @@ func Input(r io.Reader, c *config.Config) (map[string][]Worklog, error) {
 				if src != start {
 					addWorklog(worklogs, &timesheet)
 				}
+				// reset timesheet struct
+				timesheet.comment = nil
+				timesheet.defaultComment = ""
+				timesheet.issue = ""
+				// parse the time range
 				timesheet.started, timesheet.duration, err =
 					parseTimeRange(timesheet.line)
 				return err
