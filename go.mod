@@ -5,6 +5,7 @@ go 1.19
 require (
 	github.com/adrg/xdg v0.4.0
 	github.com/alecthomas/assert v1.0.0
+	github.com/alecthomas/assert/v2 v2.1.0
 	github.com/alecthomas/kong v0.7.1
 	github.com/andygrunwald/go-jira v1.16.0
 	github.com/smlx/fsm v0.2.1
@@ -20,6 +21,7 @@ require (
 	github.com/golang-jwt/jwt/v4 v4.4.2 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
+	github.com/hexops/gotextdiff v1.0.3 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/sergi/go-diff v1.2.0 // indirect

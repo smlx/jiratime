@@ -1,3 +1,4 @@
+// Package config implements configuration file handling.
 package config
 
 import (
@@ -19,9 +20,10 @@ type Issue struct {
 
 // Config represents the structure of the config file.
 type Config struct {
-	JiraURL string   `json:"jiraURL"`
-	Issues  []Issue  `json:"issues"`
-	Ignore  []Regexp `json:"ignore"`
+	JiraURL     string   `json:"jiraURL"`
+	Issues      []Issue  `json:"issues"`
+	Ignore      []Regexp `json:"ignore"`
+	RoundIssues []Regexp `json:"roundIssues"`
 }
 
 // Read the config file.
