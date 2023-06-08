@@ -40,7 +40,7 @@ func RoundWorklogs(worklogs map[string][]parse.Worklog,
 					now := time.Now()
 					worklogs[issueKey] = append(worklogs[issueKey],
 						parse.Worklog{
-							Started: time.Date(now.Year(), now.Month(), now.Day(), 4, 0, 0,
+							Started: time.Date(now.Year(), now.Month(), now.Day(), 12, 0, 0,
 								0, now.Location()),
 							Duration: roundTime,
 							Comment:  "round to 15 minutes",

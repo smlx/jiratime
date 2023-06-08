@@ -149,7 +149,7 @@ func TestRoundWorklogs(t *testing.T) {
 				"FOO-12": {
 					{Duration: 20 * time.Minute},
 					{
-						Started: time.Date(now.Year(), now.Month(), now.Day(), 4, 0, 0,
+						Started: time.Date(now.Year(), now.Month(), now.Day(), 12, 0, 0,
 							0, now.Location()),
 						Duration: 10 * time.Minute,
 						Comment:  "round to 15 minutes",
@@ -197,7 +197,7 @@ func TestRoundWorklogs(t *testing.T) {
 					{Duration: 20 * time.Minute},
 					{Duration: 20 * time.Minute},
 					{
-						Started: time.Date(now.Year(), now.Month(), now.Day(), 4, 0, 0,
+						Started: time.Date(now.Year(), now.Month(), now.Day(), 12, 0, 0,
 							0, now.Location()),
 						Duration: 5 * time.Minute,
 						Comment:  "round to 15 minutes",
@@ -280,7 +280,7 @@ func TestRoundWorklogs(t *testing.T) {
 					{Duration: 20 * time.Minute},
 					{Duration: 5 * time.Minute},
 					{
-						Started: time.Date(now.Year(), now.Month(), now.Day(), 4, 0, 0,
+						Started: time.Date(now.Year(), now.Month(), now.Day(), 12, 0, 0,
 							0, now.Location()),
 						Duration: 10 * time.Minute,
 						Comment:  "round to 15 minutes",
@@ -297,7 +297,7 @@ func TestRoundWorklogs(t *testing.T) {
 					{Duration: 20 * time.Minute},
 					{Duration: 40 * time.Minute},
 					{
-						Started: time.Date(now.Year(), now.Month(), now.Day(), 4, 0, 0,
+						Started: time.Date(now.Year(), now.Month(), now.Day(), 12, 0, 0,
 							0, now.Location()),
 						Duration: 5 * time.Minute,
 						Comment:  "round to 15 minutes",
@@ -407,7 +407,7 @@ func TestRoundWorklogs(t *testing.T) {
 					{Duration: 20 * time.Minute},
 					{Duration: 10 * time.Minute},
 					{
-						Started: time.Date(now.Year(), now.Month(), now.Day(), 4, 0, 0,
+						Started: time.Date(now.Year(), now.Month(), now.Day(), 12, 0, 0,
 							0, now.Location()),
 						Duration: 10 * time.Minute,
 						Comment:  "round to 15 minutes",
@@ -419,7 +419,7 @@ func TestRoundWorklogs(t *testing.T) {
 					{Duration: 20 * time.Minute},
 					{Duration: 10 * time.Minute},
 					{
-						Started: time.Date(now.Year(), now.Month(), now.Day(), 4, 0, 0,
+						Started: time.Date(now.Year(), now.Month(), now.Day(), 12, 0, 0,
 							0, now.Location()),
 						Duration: 5 * time.Minute,
 						Comment:  "round to 15 minutes",
@@ -469,7 +469,7 @@ func TestRoundWorklogs(t *testing.T) {
 					{Duration: 20 * time.Minute},
 					{Duration: 15 * time.Minute},
 					{
-						Started: time.Date(now.Year(), now.Month(), now.Day(), 4, 0, 0,
+						Started: time.Date(now.Year(), now.Month(), now.Day(), 12, 0, 0,
 							0, now.Location()),
 						Duration: 5 * time.Minute,
 						Comment:  "round to 15 minutes",
@@ -480,7 +480,7 @@ func TestRoundWorklogs(t *testing.T) {
 					{Duration: 20 * time.Minute},
 					{Duration: 10 * time.Minute},
 					{
-						Started: time.Date(now.Year(), now.Month(), now.Day(), 4, 0, 0,
+						Started: time.Date(now.Year(), now.Month(), now.Day(), 12, 0, 0,
 							0, now.Location()),
 						Duration: 10 * time.Minute,
 						Comment:  "round to 15 minutes",
@@ -492,7 +492,7 @@ func TestRoundWorklogs(t *testing.T) {
 					{Duration: 20 * time.Minute},
 					{Duration: 10 * time.Minute},
 					{
-						Started: time.Date(now.Year(), now.Month(), now.Day(), 4, 0, 0,
+						Started: time.Date(now.Year(), now.Month(), now.Day(), 12, 0, 0,
 							0, now.Location()),
 						Duration: 5 * time.Minute,
 						Comment:  "round to 15 minutes",
@@ -504,7 +504,7 @@ func TestRoundWorklogs(t *testing.T) {
 					{Duration: 20 * time.Minute},
 					{Duration: 40 * time.Minute},
 					{
-						Started: time.Date(now.Year(), now.Month(), now.Day(), 4, 0, 0,
+						Started: time.Date(now.Year(), now.Month(), now.Day(), 12, 0, 0,
 							0, now.Location()),
 						Duration: 5 * time.Minute,
 						Comment:  "round to 15 minutes",
