@@ -8,6 +8,7 @@ import (
 	"github.com/smlx/jiratime/internal/client"
 	"github.com/smlx/jiratime/internal/config"
 	"github.com/smlx/jiratime/internal/parse"
+	"github.com/smlx/jiratime/internal/process"
 )
 
 // SubmitCmd represents the default `submit` command.
@@ -33,6 +34,8 @@ func (cmd *SubmitCmd) Run() error {
 	if err != nil {
 		return fmt.Errorf("couldn't parse worklogs: %v", err)
 	}
+	// process the worklogs to meet organisational policy
+	process.RoundWorklogs(worklogs, conf.RoundIssues)
 	// push the worklogs into jira
 	err = client.UploadWorklogs(ctx, conf.JiraURL, worklogs, cmd.DayOffset,
 		cmd.DryRun, cmd.BasicAuth)
