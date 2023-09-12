@@ -37,7 +37,7 @@ jobs:
       run: echo "GOVERSION=$(go version)" >> $GITHUB_ENV
     - name: Run GoReleaser
       if: steps.tag.outputs.new == 'true'
-      uses: goreleaser/goreleaser-action@v4
+      uses: goreleaser/goreleaser-action@v5
       with:
         version: latest
         args: release --rm-dist
