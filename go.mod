@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/adrg/xdg v0.4.0
 	github.com/alecthomas/assert v1.0.0
-	github.com/alecthomas/assert/v2 v2.5.0
+	github.com/alecthomas/assert/v2 v2.6.0
 	github.com/alecthomas/kong v0.8.1
 	github.com/andygrunwald/go-jira v1.16.0
 	github.com/smlx/fsm v0.2.1
@@ -16,7 +16,7 @@ require (
 
 require (
 	github.com/alecthomas/colour v0.1.0 // indirect
-	github.com/alecthomas/repr v0.3.0 // indirect
+	github.com/alecthomas/repr v0.4.0 // indirect
 	github.com/fatih/structs v1.1.0 // indirect
 	github.com/golang-jwt/jwt/v4 v4.4.2 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
