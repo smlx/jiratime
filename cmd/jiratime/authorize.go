@@ -102,7 +102,7 @@ func (cmd *AuthorizeCmd) Run() error {
 		context.WithValue(ctx, oauth2.HTTPClient,
 			&http.Client{Timeout: 4 * time.Second}), code)
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("couldn't exchange token: %v", err)
 	}
 	auth.Token = tok
 	if err = config.WriteAuth(auth); err != nil {
