@@ -23,11 +23,19 @@ func startRedirectServer(ctx context.Context, state string, c chan<- string) {
 	mux := http.NewServeMux()
 	// Create a new redirect route
 	mux.HandleFunc("/oauth/redirect", func(w http.ResponseWriter, r *http.Request) {
+		// first, check the state matches
+		if state != r.URL.Query().Get("state") {
+			fmt.Fprintf(os.Stderr, `invalid state: expected "%s", got "%s"`,
+				state, r.URL.Query().Get("state"))
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
 		// First, we need to get the value of the `code` query param
 		err := r.ParseForm()
 		if err != nil {
-			fmt.Fprintf(os.Stdout, "could not parse query: %v", err)
+			fmt.Fprintf(os.Stderr, "could not parse query: %v", err)
 			w.WriteHeader(http.StatusBadRequest)
+			return
 		}
 		c <- r.FormValue("code")
 		_, _ = w.Write([]byte("Authorization successful. You may now close this page."))
@@ -94,7 +102,7 @@ func (cmd *AuthorizeCmd) Run() error {
 		context.WithValue(ctx, oauth2.HTTPClient,
 			&http.Client{Timeout: 4 * time.Second}), code)
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("couldn't exchange token: %v", err)
 	}
 	auth.Token = tok
 	if err = config.WriteAuth(auth); err != nil {

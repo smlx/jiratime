@@ -1,5 +1,9 @@
+version: 2
 builds:
-- main: ./cmd/jiratime
+- &buildDefinition
+  id: jiratime
+  binary: jiratime
+  main: ./cmd/jiratime
   ldflags:
   - >
     -s -w
@@ -7,6 +11,15 @@ builds:
     -X "main.date={{.Date}}"
     -X "main.goVersion={{.Env.GOVERSION}}"
     -X "main.projectName={{.ProjectName}}"
-    -X "main.version={{.Version}}"
+    -X "main.version=v{{.Version}}"
   env:
   - CGO_ENABLED=0
+  goos:
+  - linux
+  - darwin
+  goarch:
+  - amd64
+  - arm64
+
+changelog:
+  use: github-native
