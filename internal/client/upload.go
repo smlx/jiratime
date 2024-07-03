@@ -2,9 +2,13 @@ package client
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
+	"net/url"
+	"path"
 	"time"
 
 	jira "github.com/andygrunwald/go-jira"
@@ -66,6 +70,32 @@ func newOAuth2HTTPClient(ctx context.Context) (*http.Client, oauth2.TokenSource,
 	return httpClient, tokenSource, auth, nil
 }
 
+func OAuth2JiraURL(client *http.Client, jiraURL string) (string, error) {
+	tenantInfo := struct {
+		CloudID string `json:"cloudId"`
+	}{}
+	urlTmpl := "https://api.atlassian.com/ex/jira/%s"
+	ju, err := url.Parse(jiraURL)
+	if err != nil {
+		return "", fmt.Errorf("couldn't parse Jira URL: %v", err)
+	}
+	ju.Path = path.Join(ju.Path, "/_edge/tenant_info")
+	// get the cloud ID
+	resp, err := client.Get(ju.String())
+	if err != nil {
+		return "", fmt.Errorf("couldn't get tenant info: %v", err)
+	}
+	defer resp.Body.Close()
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("couldn't read response body: %v", err)
+	}
+	if err = json.Unmarshal(data, &tenantInfo); err != nil {
+		return "", fmt.Errorf("couldn't unmrashal tenant info: %v", err)
+	}
+	return fmt.Sprintf(urlTmpl, tenantInfo.CloudID), nil
+}
+
 // UploadWorklogs uploads the given worklogs to Jira, with the
 // given day offset (e.g. -1 == yesterday).
 func UploadWorklogs(ctx context.Context, jiraURL string,
@@ -84,6 +114,12 @@ func UploadWorklogs(ctx context.Context, jiraURL string,
 		httpClient, tokenSource, auth, err = newOAuth2HTTPClient(ctx)
 		if err != nil {
 			return fmt.Errorf("couldn't construct OAuth2 HTTP client: %v", err)
+		}
+		// rewrite the Jira URL as per the docs for OAuth2 clients
+		// https://developer.atlassian.com/cloud/jira/platform/rest/v2/intro/#authentication
+		jiraURL, err = OAuth2JiraURL(httpClient, jiraURL)
+		if err != nil {
+			return fmt.Errorf("couldn't construct OAuth2 Jira URL: %v", err)
 		}
 	}
 	// wrap this http client in a jira client via jira.NewClient
