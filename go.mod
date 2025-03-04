@@ -1,16 +1,18 @@
 module github.com/smlx/jiratime
 
-go 1.19
+go 1.23.0
+
+toolchain go1.24.0
 
 require (
 	github.com/adrg/xdg v0.5.3
 	github.com/alecthomas/assert v1.0.0
 	github.com/alecthomas/assert/v2 v2.11.0
-	github.com/alecthomas/kong v1.7.0
+	github.com/alecthomas/kong v1.8.1
 	github.com/andygrunwald/go-jira v1.16.0
 	github.com/smlx/fsm v0.2.1
 	golang.org/x/exp v0.0.0-20230321023759-10a507213a29
-	golang.org/x/oauth2 v0.25.0
+	golang.org/x/oauth2 v0.27.0
 	sigs.k8s.io/yaml v1.4.0
 )
 
