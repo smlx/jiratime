@@ -22,5 +22,5 @@ func (r *Regexp) UnmarshalJSON(text []byte) error {
 
 // MarshalJSON satisfies the json.Marshaler interface.
 func (r *Regexp) MarshalJSON() ([]byte, error) {
-	return []byte(r.Regexp.String()), nil
+	return []byte(r.String()), nil
 }
