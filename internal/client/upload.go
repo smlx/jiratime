@@ -85,7 +85,7 @@ func OAuth2JiraURL(client *http.Client, jiraURL string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("couldn't get tenant info: %v", err)
 	}
-	defer resp.Body.Close() // nolint: errcheck
+	defer resp.Body.Close()
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", fmt.Errorf("couldn't read response body: %v", err)
