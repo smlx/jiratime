@@ -8,17 +8,17 @@ require (
 	github.com/adrg/xdg v0.5.3
 	github.com/alecthomas/assert v1.0.0
 	github.com/alecthomas/assert/v2 v2.11.0
-	github.com/alecthomas/kong v1.12.1
+	github.com/alecthomas/kong v1.13.0
 	github.com/andygrunwald/go-jira v1.17.0
 	github.com/smlx/fsm v0.2.1
 	golang.org/x/exp v0.0.0-20230321023759-10a507213a29
-	golang.org/x/oauth2 v0.32.0
+	golang.org/x/oauth2 v0.33.0
 	sigs.k8s.io/yaml v1.6.0
 )
 
 require (
 	github.com/alecthomas/colour v0.1.0 // indirect
-	github.com/alecthomas/repr v0.4.0 // indirect
+	github.com/alecthomas/repr v0.5.2 // indirect
 	github.com/fatih/structs v1.1.0 // indirect
 	github.com/golang-jwt/jwt/v4 v4.5.2 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
