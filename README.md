@@ -185,7 +185,7 @@ Authorization successful. You may now close this page.
 
 ### Basic Auth
 
-1. Visit Atlassian's [developer console](https://developer.atlassian.com/console/myapps/), and log in.
+1. Visit Atlassian's developer console[api tokens](https://id.atlassian.com/manage-profile/security/api-tokens) page.
 2. Create a new API Key.
 3. Add the credentials to `$XDG_CONFIG_HOME/jiratime/basicauth.yml`.
 
