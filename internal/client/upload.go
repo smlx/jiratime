@@ -11,7 +11,7 @@ import (
 	"path"
 	"time"
 
-	jira "github.com/andygrunwald/go-jira"
+	jira "github.com/andygrunwald/go-jira/v2/cloud"
 	"github.com/smlx/jiratime/internal/config"
 	"github.com/smlx/jiratime/internal/parse"
 	"golang.org/x/oauth2"
@@ -33,10 +33,10 @@ func (art *authenticatedRoundTripper) RoundTrip(
 	return http.DefaultTransport.RoundTrip(req)
 }
 
-func newBasicAuthHTTPClient() (*http.Client, error) {
+func newBasicAuthHTTPClient() (*http.Client, string, error) {
 	basic, err := config.ReadBasicAuth()
 	if err != nil {
-		return nil, fmt.Errorf("couldn't read basic auth: %v", err)
+		return nil, "", fmt.Errorf("couldn't read basic auth: %v", err)
 	}
 	// construct http.Client with automatic basic auth
 	return &http.Client{
@@ -45,7 +45,7 @@ func newBasicAuthHTTPClient() (*http.Client, error) {
 			username: basic.User,
 			password: basic.APIKey,
 		},
-	}, nil
+	}, basic.User, nil
 }
 
 func newOAuth2HTTPClient(ctx context.Context) (*http.Client, oauth2.TokenSource, *config.OAuth2, error) {
@@ -106,7 +106,7 @@ func UploadWorklogs(ctx context.Context, jiraURL string,
 	var tokenSource oauth2.TokenSource
 	var auth *config.OAuth2
 	if basicAuth {
-		httpClient, err = newBasicAuthHTTPClient()
+		httpClient, _, err = newBasicAuthHTTPClient()
 		if err != nil {
 			return fmt.Errorf("couldn't construct basic auth HTTP client: %v", err)
 		}
@@ -123,7 +123,7 @@ func UploadWorklogs(ctx context.Context, jiraURL string,
 		}
 	}
 	// wrap this http client in a jira client via jira.NewClient
-	c, err := jira.NewClient(httpClient, jiraURL)
+	c, err := jira.NewClient(jiraURL, httpClient)
 	if err != nil {
 		return fmt.Errorf("couldn't get new Jira client: %v", err)
 	}
@@ -133,8 +133,8 @@ func UploadWorklogs(ctx context.Context, jiraURL string,
 		success = false
 		var err error
 		var response *jira.Response
-		for i := 0; i < requestRetries; i++ {
-			_, response, err = c.Issue.GetWithContext(ctx, issue, nil)
+		for range requestRetries {
+			_, response, err = c.Issue.Get(ctx, issue, nil)
 			if err == nil {
 				success = true
 				break // successful get
@@ -180,8 +180,8 @@ func UploadWorklogs(ctx context.Context, jiraURL string,
 				Started:          &started,
 			}
 		retryAddWorklog:
-			for i := 0; i < requestRetries; i++ {
-				_, response, err := c.Issue.AddWorklogRecordWithContext(ctx, issue, &wr)
+			for range requestRetries {
+				_, response, err := c.Issue.AddWorklogRecord(ctx, issue, &wr)
 				if err == nil {
 					break retryAddWorklog
 				}

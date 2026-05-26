@@ -13,10 +13,9 @@ import (
 
 // DumpWorklogsCmd represents the `dump-worklogs` command.
 type DumpWorklogsCmd struct {
-	Since         time.Time     `kong:"required,help='time from which the worklogs should be dumped'"`
-	Timeout       time.Duration `kong:"default=1h,help='maximum duration allowed for the command to return'"`
-	WorklogAuthor string        `kong:"required,help='worklog author name'"`
-	BasicAuth     bool          `kong:"help='use basic auth instead of OAuth2'"`
+	Since     time.Time     `kong:"required,help='time from which the worklogs should be dumped'"`
+	Timeout   time.Duration `kong:"default=1h,help='maximum duration allowed for the command to return'"`
+	BasicAuth bool          `kong:"help='use basic auth instead of OAuth2'"`
 }
 
 // Run the DumpWorklogs command.
@@ -37,8 +36,7 @@ func (cmd *DumpWorklogsCmd) Run() error {
 			Level:     &level,
 		}.NewJSONHandler(os.Stderr))
 	// get the worklogs
-	worklogs, err := client.Worklogs(ctx, log, conf.JiraURL, cmd.Since,
-		cmd.WorklogAuthor, cmd.BasicAuth)
+	worklogs, err := client.Worklogs(ctx, log, conf.JiraURL, cmd.Since, cmd.BasicAuth)
 	if err != nil {
 		return fmt.Errorf("couldn't dump worklogs: %v", err)
 	}
