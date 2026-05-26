@@ -166,7 +166,7 @@ On failure it will exit with a non-zero return code and a message on standard er
 
 #### Complete OAuth2 authorization flow
 
-Create `$XDG_CONFIG_HOME/jiratime/auth.yml` and add your app credentials:
+Create [`$XDG_CONFIG_HOME`](https://github.com/adrg/xdg#xdg-base-directory)`/jiratime/auth.yml` and add your app credentials:
 
 ```yaml
 oauth2:
@@ -191,9 +191,9 @@ The required scopes are the same as OAuth2:
 * `read:jira-work`
 * `write:jira-work`
 
-1. Visit Atlassian's developer console[api tokens](https://id.atlassian.com/manage-profile/security/api-tokens) page.
+1. Visit Atlassian's developer console [api tokens](https://id.atlassian.com/manage-profile/security/api-tokens) page.
 2. Create a new API Key.
-3. Add the credentials to `$XDG_CONFIG_HOME/jiratime/basicauth.yml`.
+3. Add the credentials to [`$XDG_CONFIG_HOME`](https://github.com/adrg/xdg#xdg-base-directory)`/jiratime/basicauth.yml`.
 
 Example:
 
