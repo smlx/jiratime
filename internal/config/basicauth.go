@@ -16,6 +16,12 @@ type BasicAuth struct {
 	APIKey string `json:"apiKey"`
 }
 
+// HasBasicAuth returns true if the basicauth file exists.
+func HasBasicAuth() bool {
+	path, err := xdg.SearchConfigFile(basicAuthPathSuffix)
+	return err == nil && path != ""
+}
+
 // ReadBasicAuth the config file.
 func ReadBasicAuth() (*BasicAuth, error) {
 	path, err := xdg.ConfigFile(basicAuthPathSuffix)

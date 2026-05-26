@@ -3,13 +3,10 @@ package client
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"time"
 
 	jira "github.com/andygrunwald/go-jira/v2/cloud"
-	"github.com/smlx/jiratime/internal/config"
 	"golang.org/x/exp/slog"
-	"golang.org/x/oauth2"
 )
 
 // getAllIssues returns all the issues by automatically paging through results.
@@ -80,31 +77,8 @@ func getWorklogRecords(ctx context.Context, c *jira.Client,
 }
 
 // Worklogs returns the worklogs since the given time.
-func Worklogs(ctx context.Context, log *slog.Logger, jiraURL string,
-	since time.Time, basicAuth bool) (map[string][]jira.WorklogRecord, error) {
-	var httpClient *http.Client
-	var err error
-	var tokenSource oauth2.TokenSource
-	var auth *config.OAuth2
-	var userEmail string
-	if basicAuth {
-		httpClient, userEmail, err = newBasicAuthHTTPClient()
-		if err != nil {
-			return nil, fmt.Errorf(
-				"couldn't construct basic auth HTTP client (required for worklogs): %v", err)
-		}
-	} else {
-		httpClient, tokenSource, auth, err = newOAuth2HTTPClient(ctx)
-		if err != nil {
-			return nil, fmt.Errorf(
-				"couldn't construct basic auth HTTP client: %v", err)
-		}
-	}
-	// wrap this http client in a jira client via jira.NewClient
-	c, err := jira.NewClient(jiraURL, httpClient)
-	if err != nil {
-		return nil, fmt.Errorf("couldn't get new Jira client: %v", err)
-	}
+func Worklogs(ctx context.Context, log *slog.Logger, c *jira.Client, userEmail string,
+	since time.Time) (map[string][]jira.WorklogRecord, error) {
 	// get all the issues with a worklog by the author
 	issues, err := getAllIssues(ctx, c,
 		fmt.Sprintf(`worklogAuthor = currentUser() AND worklogDate >= "%s"`,
@@ -124,21 +98,6 @@ func Worklogs(ctx context.Context, log *slog.Logger, jiraURL string,
 			slog.String("issue", issue.Key),
 			slog.Int("worklogRecordCount", len(wlrs)))
 		worklogs[issue.Key] = wlrs
-	}
-	if !basicAuth {
-		// persist the token, as Atlassian rotates refresh tokens
-		newTok, err := tokenSource.Token()
-		if err != nil {
-			return nil, fmt.Errorf("couldn't get Token from oauth2.TokenSource: %v", err)
-		}
-		err = config.WriteAuth(&config.OAuth2{
-			ClientID: auth.ClientID,
-			Secret:   auth.Secret,
-			Token:    newTok,
-		})
-		if err != nil {
-			return nil, fmt.Errorf("couldn't persist new token: %v", err)
-		}
 	}
 	return worklogs, nil
 }

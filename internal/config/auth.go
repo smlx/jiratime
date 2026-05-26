@@ -23,6 +23,12 @@ type OAuth2 struct {
 	Token    *oauth2.Token `json:"token"`
 }
 
+// HasAuth returns true if the auth file exists.
+func HasAuth() bool {
+	path, err := xdg.SearchConfigFile(authPathSuffix)
+	return err == nil && path != ""
+}
+
 // ReadAuth the config file.
 func ReadAuth() (*OAuth2, error) {
 	path, err := xdg.ConfigFile(authPathSuffix)

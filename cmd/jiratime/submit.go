@@ -36,11 +36,16 @@ func (cmd *SubmitCmd) Run() error {
 	}
 	// process the worklogs to meet organisational policy
 	process.RoundWorklogs(worklogs, conf.RoundIssues)
+
+	c, _, persistToken, err := getJiraClient(ctx, conf.JiraURL, cmd.BasicAuth)
+	if err != nil {
+		return fmt.Errorf("couldn't get Jira client: %v", err)
+	}
+
 	// push the worklogs into jira
-	err = client.UploadWorklogs(ctx, conf.JiraURL, worklogs, cmd.DayOffset,
-		cmd.DryRun, cmd.BasicAuth)
+	err = client.UploadWorklogs(ctx, c, worklogs, cmd.DayOffset, cmd.DryRun)
 	if err != nil {
 		return fmt.Errorf("couldn't upload worklogs: %v", err)
 	}
-	return nil
+	return persistToken()
 }

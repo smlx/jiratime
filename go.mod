@@ -8,7 +8,6 @@ require (
 	github.com/alecthomas/assert/v2 v2.11.0
 	github.com/alecthomas/kong v1.15.0
 	github.com/andygrunwald/go-jira/v2 v2.0.0-20260505113657-a02f7e66200c
-	github.com/davecgh/go-spew v1.1.1
 	github.com/smlx/fsm v0.2.1
 	golang.org/x/exp v0.0.0-20230321023759-10a507213a29
 	golang.org/x/oauth2 v0.36.0
