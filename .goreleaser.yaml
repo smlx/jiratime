@@ -1,7 +1,6 @@
 version: 2
 builds:
-- &buildDefinition
-  id: jiratime
+- id: jiratime
   binary: jiratime
   main: ./cmd/jiratime
   ldflags:
@@ -9,7 +8,6 @@ builds:
     -s -w
     -X "main.commit={{.Commit}}"
     -X "main.date={{.Date}}"
-    -X "main.goVersion={{.Env.GOVERSION}}"
     -X "main.projectName={{.ProjectName}}"
     -X "main.version=v{{.Version}}"
   env:

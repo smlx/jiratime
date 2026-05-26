@@ -185,7 +185,13 @@ Authorization successful. You may now close this page.
 
 ### Basic Auth
 
-1. Visit Atlassian's [developer console](https://developer.atlassian.com/console/myapps/), and log in.
+There are two flavours of basic auth token: scoped and non-scoped. Granular scopes are not supported. If you create a classic _scoped_ token (recommended!), then you'll need to set `scoped: true` in your `basicauth.yml`.
+
+The required scopes are the same as OAuth2:
+* `read:jira-work`
+* `write:jira-work`
+
+1. Visit Atlassian's developer console[api tokens](https://id.atlassian.com/manage-profile/security/api-tokens) page.
 2. Create a new API Key.
 3. Add the credentials to `$XDG_CONFIG_HOME/jiratime/basicauth.yml`.
 
@@ -194,7 +200,10 @@ Example:
 ```yaml
 user: my.name@example.com
 apiKey: SZ8411BnS9dKw2FDArWAe9eYiToNTx6ugtCzR2UTtaSFmXnw16bYcBuiLFYuqSffnFEzdXti8HcVRWPaLjPxFaOx7KVlckD2amFoxiiwK2hTBlfYU62CrJJ3VfZprwf3
+scoped: true
 ```
+
+You can also create an unscoped token, but that has excessive privileges (every scope!) so this is not recommended. If you do use an unscoped token, omit the `scoped` field from `basicauth.yml`.
 
 ## Usage
 

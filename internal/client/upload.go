@@ -11,7 +11,7 @@ import (
 	"path"
 	"time"
 
-	jira "github.com/andygrunwald/go-jira"
+	jira "github.com/andygrunwald/go-jira/v2/cloud"
 	"github.com/smlx/jiratime/internal/config"
 	"github.com/smlx/jiratime/internal/parse"
 	"golang.org/x/oauth2"
@@ -33,10 +33,10 @@ func (art *authenticatedRoundTripper) RoundTrip(
 	return http.DefaultTransport.RoundTrip(req)
 }
 
-func newBasicAuthHTTPClient() (*http.Client, error) {
+func NewBasicAuthHTTPClient() (*http.Client, string, bool, error) {
 	basic, err := config.ReadBasicAuth()
 	if err != nil {
-		return nil, fmt.Errorf("couldn't read basic auth: %v", err)
+		return nil, "", false, fmt.Errorf("couldn't read basic auth: %v", err)
 	}
 	// construct http.Client with automatic basic auth
 	return &http.Client{
@@ -45,10 +45,10 @@ func newBasicAuthHTTPClient() (*http.Client, error) {
 			username: basic.User,
 			password: basic.APIKey,
 		},
-	}, nil
+	}, basic.User, basic.Scoped, nil
 }
 
-func newOAuth2HTTPClient(ctx context.Context) (*http.Client, oauth2.TokenSource, *config.OAuth2, error) {
+func NewOAuth2HTTPClient(ctx context.Context) (*http.Client, oauth2.TokenSource, *config.OAuth2, error) {
 	// load the auth config to get the oauth2 token
 	auth, err := config.ReadAuth()
 	if err != nil {
@@ -70,7 +70,7 @@ func newOAuth2HTTPClient(ctx context.Context) (*http.Client, oauth2.TokenSource,
 	return httpClient, tokenSource, auth, nil
 }
 
-func OAuth2JiraURL(client *http.Client, jiraURL string) (string, error) {
+func CloudIDJiraURL(client *http.Client, jiraURL string) (string, error) {
 	tenantInfo := struct {
 		CloudID string `json:"cloudId"`
 	}{}
@@ -98,43 +98,21 @@ func OAuth2JiraURL(client *http.Client, jiraURL string) (string, error) {
 
 // UploadWorklogs uploads the given worklogs to Jira, with the
 // given day offset (e.g. -1 == yesterday).
-func UploadWorklogs(ctx context.Context, jiraURL string,
-	issueWorklogs map[string][]parse.Worklog, dayOffset int, dryRun bool,
-	basicAuth bool) error {
-	var httpClient *http.Client
-	var err error
-	var tokenSource oauth2.TokenSource
-	var auth *config.OAuth2
-	if basicAuth {
-		httpClient, err = newBasicAuthHTTPClient()
-		if err != nil {
-			return fmt.Errorf("couldn't construct basic auth HTTP client: %v", err)
-		}
-	} else {
-		httpClient, tokenSource, auth, err = newOAuth2HTTPClient(ctx)
-		if err != nil {
-			return fmt.Errorf("couldn't construct OAuth2 HTTP client: %v", err)
-		}
-		// rewrite the Jira URL as per the docs for OAuth2 clients
-		// https://developer.atlassian.com/cloud/jira/platform/rest/v2/intro/#authentication
-		jiraURL, err = OAuth2JiraURL(httpClient, jiraURL)
-		if err != nil {
-			return fmt.Errorf("couldn't construct OAuth2 Jira URL: %v", err)
-		}
-	}
-	// wrap this http client in a jira client via jira.NewClient
-	c, err := jira.NewClient(httpClient, jiraURL)
-	if err != nil {
-		return fmt.Errorf("couldn't get new Jira client: %v", err)
-	}
+func UploadWorklogs(
+	ctx context.Context,
+	c *jira.Client,
+	issueWorklogs map[string][]parse.Worklog,
+	dayOffset int,
+	dryRun bool,
+) error {
 	// check that all the issues in worklogs exist
 	var success bool
 	for issue := range issueWorklogs {
 		success = false
 		var err error
 		var response *jira.Response
-		for i := 0; i < requestRetries; i++ {
-			_, response, err = c.Issue.GetWithContext(ctx, issue, nil)
+		for range requestRetries {
+			_, response, err = c.Issue.Get(ctx, issue, nil)
 			if err == nil {
 				success = true
 				break // successful get
@@ -147,21 +125,6 @@ func UploadWorklogs(ctx context.Context, jiraURL string,
 		if !success {
 			return fmt.Errorf("couldn't get Jira issue %s after %d retries: %v",
 				issue, requestRetries, err)
-		}
-	}
-	if !basicAuth {
-		// persist the token, as Atlassian rotates refresh tokens
-		newTok, err := tokenSource.Token()
-		if err != nil {
-			return fmt.Errorf("couldn't get Token from oauth2.TokenSource: %v", err)
-		}
-		err = config.WriteAuth(&config.OAuth2{
-			ClientID: auth.ClientID,
-			Secret:   auth.Secret,
-			Token:    newTok,
-		})
-		if err != nil {
-			return fmt.Errorf("couldn't persist new token: %v", err)
 		}
 	}
 	// exit early in dry-run mode
@@ -180,8 +143,8 @@ func UploadWorklogs(ctx context.Context, jiraURL string,
 				Started:          &started,
 			}
 		retryAddWorklog:
-			for i := 0; i < requestRetries; i++ {
-				_, response, err := c.Issue.AddWorklogRecordWithContext(ctx, issue, &wr)
+			for range requestRetries {
+				_, response, err := c.Issue.AddWorklogRecord(ctx, issue, &wr)
 				if err == nil {
 					break retryAddWorklog
 				}
