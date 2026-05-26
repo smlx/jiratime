@@ -14,6 +14,7 @@ const basicAuthPathSuffix = "jiratime/basicauth.yml"
 type BasicAuth struct {
 	User   string `json:"user"`
 	APIKey string `json:"apiKey"`
+	Scoped bool   `json:"scoped,omitempty"`
 }
 
 // HasBasicAuth returns true if the basicauth file exists.

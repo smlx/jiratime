@@ -33,10 +33,10 @@ func (art *authenticatedRoundTripper) RoundTrip(
 	return http.DefaultTransport.RoundTrip(req)
 }
 
-func NewBasicAuthHTTPClient() (*http.Client, string, error) {
+func NewBasicAuthHTTPClient() (*http.Client, string, bool, error) {
 	basic, err := config.ReadBasicAuth()
 	if err != nil {
-		return nil, "", fmt.Errorf("couldn't read basic auth: %v", err)
+		return nil, "", false, fmt.Errorf("couldn't read basic auth: %v", err)
 	}
 	// construct http.Client with automatic basic auth
 	return &http.Client{
@@ -45,7 +45,7 @@ func NewBasicAuthHTTPClient() (*http.Client, string, error) {
 			username: basic.User,
 			password: basic.APIKey,
 		},
-	}, basic.User, nil
+	}, basic.User, basic.Scoped, nil
 }
 
 func NewOAuth2HTTPClient(ctx context.Context) (*http.Client, oauth2.TokenSource, *config.OAuth2, error) {
@@ -70,7 +70,7 @@ func NewOAuth2HTTPClient(ctx context.Context) (*http.Client, oauth2.TokenSource,
 	return httpClient, tokenSource, auth, nil
 }
 
-func OAuth2JiraURL(client *http.Client, jiraURL string) (string, error) {
+func CloudIDJiraURL(client *http.Client, jiraURL string) (string, error) {
 	tenantInfo := struct {
 		CloudID string `json:"cloudId"`
 	}{}

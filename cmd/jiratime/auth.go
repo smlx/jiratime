@@ -24,11 +24,18 @@ func getJiraClient(
 	var tokenSource oauth2.TokenSource
 	var auth *config.OAuth2
 	var userEmail string
+	var scoped bool
 
 	if useBasicAuth {
-		httpClient, userEmail, err = client.NewBasicAuthHTTPClient()
+		httpClient, userEmail, scoped, err = client.NewBasicAuthHTTPClient()
 		if err != nil {
 			return nil, "", nil, fmt.Errorf("couldn't construct basic auth HTTP client: %v", err)
+		}
+		if scoped {
+			jiraURL, err = client.CloudIDJiraURL(httpClient, jiraURL)
+			if err != nil {
+				return nil, "", nil, fmt.Errorf("couldn't construct OAuth2 Jira URL: %v", err)
+			}
 		}
 	} else {
 		httpClient, tokenSource, auth, err = client.NewOAuth2HTTPClient(ctx)
@@ -36,7 +43,7 @@ func getJiraClient(
 			return nil, "", nil, fmt.Errorf("couldn't construct OAuth2 HTTP client: %v", err)
 		}
 
-		jiraURL, err = client.OAuth2JiraURL(httpClient, jiraURL)
+		jiraURL, err = client.CloudIDJiraURL(httpClient, jiraURL)
 		if err != nil {
 			return nil, "", nil, fmt.Errorf("couldn't construct OAuth2 Jira URL: %v", err)
 		}
