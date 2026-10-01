@@ -1,6 +1,6 @@
 module github.com/smlx/jiratime
 
-go 1.25.0
+go 1.26.0
 
 require (
 	github.com/adrg/xdg v0.5.3
@@ -10,7 +10,7 @@ require (
 	github.com/andygrunwald/go-jira/v2 v2.0.0-20260505113657-a02f7e66200c
 	github.com/smlx/fsm v0.2.1
 	golang.org/x/exp v0.0.0-20230321023759-10a507213a29
-	golang.org/x/oauth2 v0.36.0
+	golang.org/x/oauth2 v0.37.0
 	sigs.k8s.io/yaml v1.6.0
 )
 
